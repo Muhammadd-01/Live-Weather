@@ -26,8 +26,8 @@ const BackgroundAnimation: React.FC = () => {
     window.addEventListener("resize", resizeCanvas)
 
     // Determine background style based on weather and theme
-    let particleColor = theme === "dark" ? "rgba(255, 255, 255, 0.3)" : "rgba(0, 0, 0, 0.1)"
-    let particleCount = 50
+    let particleColor = theme === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.05)"
+    let particleCount = 100
     let particleSpeed = 0.2
     let particleSize = 2
     let windEffect = 0
