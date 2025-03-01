@@ -1,12 +1,14 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode, useCallback } from "react"
+import type React from "react"
+
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react"
 import { getCurrentWeather, getForecast, getWeatherByCity } from "../api/weatherApi"
 import type { WeatherData, ForecastData, WeatherContextType } from "../types/weather"
 
 const WeatherContext = createContext<WeatherContextType | undefined>(undefined)
 
-export const WeatherProvider = ({ children }: { children: ReactNode }) => {
+export const WeatherProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentWeather, setCurrentWeather] = useState<WeatherData | null>(null)
   const [forecast, setForecast] = useState<ForecastData | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
@@ -19,14 +21,9 @@ export const WeatherProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     localStorage.setItem("units", units)
-    if (currentWeather && !locationLoading) {
-      // Only refresh if we have coordinates from current weather
-      const { lat, lon } = currentWeather.coord
-      fetchWeatherData(lat, lon)
-    }
-  }, [units, currentWeather, currentWeather?.coord, locationLoading])
+  }, [units])
 
-  const getUserLocation = (): Promise<GeolocationPosition> => {
+  const getUserLocation = useCallback((): Promise<GeolocationPosition> => {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
         reject(new Error("Geolocation is not supported by your browser"))
@@ -34,31 +31,30 @@ export const WeatherProvider = ({ children }: { children: ReactNode }) => {
         navigator.geolocation.getCurrentPosition(resolve, reject)
       }
     })
-  }
+  }, [])
 
-  const fetchWeatherData = async (lat: number, lon: number) => {
-    try {
-      setLoading(true)
-      const weatherData = await getCurrentWeather(lat, lon, units)
-      const forecastData = await getForecast(lat, lon, units)
-      setCurrentWeather(weatherData)
-      setForecast(forecastData)
-      setError(null)
-    } catch (err) {
-      setError("Failed to fetch weather data. Please try again.")
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const fetchWeatherData = useCallback(
+    async (lat: number, lon: number) => {
+      try {
+        setLoading(true)
+        const weatherData = await getCurrentWeather(lat, lon, units)
+        const forecastData = await getForecast(lat, lon, units)
+        setCurrentWeather(weatherData)
+        setForecast(forecastData)
+        setError(null)
+      } catch (err) {
+        setError("Failed to fetch weather data. Please try again.")
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    },
+    [units],
+  )
 
   const refreshWeather = useCallback(async () => {
     try {
       setLocationLoading(true)
-      // Only set general loading to true when we don't have any data yet
-      if (!currentWeather) {
-        setLoading(true)
-      }
       const position = await getUserLocation()
       const { latitude, longitude } = position.coords
       await fetchWeatherData(latitude, longitude)
@@ -67,48 +63,49 @@ export const WeatherProvider = ({ children }: { children: ReactNode }) => {
       console.error(err)
     } finally {
       setLocationLoading(false)
-      setLoading(false)
     }
-  }, [currentWeather, fetchWeatherData, getUserLocation])
+  }, [fetchWeatherData, getUserLocation])
 
-  const searchCity = async (city: string) => {
-    try {
-      setLoading(true)
-      const weatherData = await getWeatherByCity(city, units)
-      const { lat, lon } = weatherData.coord
-      const forecastData = await getForecast(lat, lon, units)
-      setCurrentWeather(weatherData)
-      setForecast(forecastData)
-      setError(null)
-    } catch (err) {
-      setError("City not found. Please try another search.")
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const searchCity = useCallback(
+    async (city: string) => {
+      try {
+        setLoading(true)
+        const weatherData = await getWeatherByCity(city, units)
+        const { lat, lon } = weatherData.coord
+        const forecastData = await getForecast(lat, lon, units)
+        setCurrentWeather(weatherData)
+        setForecast(forecastData)
+        setError(null)
+      } catch (err) {
+        setError("City not found. Please try another search.")
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    },
+    [units],
+  )
 
   useEffect(() => {
     refreshWeather()
   }, [refreshWeather])
 
-  return (
-    <WeatherContext.Provider
-      value={{
-        currentWeather,
-        forecast,
-        loading,
-        locationLoading,
-        error,
-        units,
-        setUnits,
-        searchCity,
-        refreshWeather,
-      }}
-    >
-      {children}
-    </WeatherContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      currentWeather,
+      forecast,
+      loading,
+      locationLoading,
+      error,
+      units,
+      setUnits,
+      searchCity,
+      refreshWeather,
+    }),
+    [currentWeather, forecast, loading, locationLoading, error, units, searchCity, refreshWeather],
   )
+
+  return <WeatherContext.Provider value={contextValue}>{children}</WeatherContext.Provider>
 }
 
 export const useWeather = () => {

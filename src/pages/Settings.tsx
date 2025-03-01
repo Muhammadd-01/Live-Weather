@@ -1,19 +1,29 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { FaSun, FaMoon, FaCog, FaGlobe, FaBell } from "react-icons/fa"
-import { useTheme } from "../context/ThemeContext"
-import { useWeather } from "../context/WeatherContext"
-import { useLanguage } from "../context/LanguageContext"
-import { translations } from "../utils/translations"
+import { useState, useEffect } from "react";
+import { FaSun, FaMoon, FaCog, FaGlobe, FaBell } from "react-icons/fa";
+import { useTheme } from "../context/ThemeContext";
+import { useWeather } from "../context/WeatherContext";
+import { translations } from "../utils/translations";
+import type { Language } from "../types";
 
 const Settings = () => {
-  const { theme, toggleTheme } = useTheme()
-  const { units, setUnits } = useWeather()
-  const { language, setLanguage } = useLanguage()
-  const [notifications, setNotifications] = useState(true)
+  const { theme, toggleTheme } = useTheme();
+  const { units, setUnits } = useWeather();
 
-  const t = translations[language]
+  // Corrected useState declaration
+  const [language, setLanguage] = useState<Language>(() => {
+    return (localStorage.getItem("language") as Language) || "en";
+  });
+
+  const [notifications, setNotifications] = useState(true);
+
+  // Ensure `language` is a valid key in `translations`
+  const t = translations[language as keyof typeof translations] || translations["en"];
+
+  useEffect(() => {
+    localStorage.setItem("language", language);
+  }, [language]);
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -23,6 +33,7 @@ const Settings = () => {
       </div>
 
       <div className="space-y-6">
+        {/* Appearance Settings */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">{t.appearance}</h2>
 
@@ -52,6 +63,7 @@ const Settings = () => {
           </div>
         </div>
 
+        {/* Units Selection */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">{t.units}</h2>
 
@@ -88,6 +100,7 @@ const Settings = () => {
           </div>
         </div>
 
+        {/* Notifications */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">{t.notifications}</h2>
 
@@ -113,6 +126,7 @@ const Settings = () => {
           </div>
         </div>
 
+        {/* Language Selection */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">{t.language}</h2>
 
@@ -122,7 +136,7 @@ const Settings = () => {
               <p className="font-medium mb-2">{t.selectLanguage}</p>
               <select
                 value={language}
-                onChange={(e) => setLanguage(e.target.value as any)}
+                onChange={(e) => setLanguage(e.target.value as Language)}
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="en">{t.english}</option>
@@ -136,8 +150,7 @@ const Settings = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Settings
-
+export default Settings;
