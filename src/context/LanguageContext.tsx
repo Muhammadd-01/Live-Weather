@@ -1,9 +1,9 @@
 "use client"
 
 import type React from "react"
-import { createContext, useContext, useState, type ReactNode, useEffect } from "react"
+import { createContext, useContext, useState, useEffect } from "react"
 
-type Language = "en" | "es" | "fr" | "de" | "ja"
+export type Language = "en" | "es" | "fr" | "de" | "ja"
 
 interface LanguageContextType {
   language: Language
@@ -12,9 +12,12 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
-export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>(() => {
-    return (localStorage.getItem("language") as Language) || "en"
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem("language") as Language) || "en"
+    }
+    return "en"
   })
 
   useEffect(() => {
