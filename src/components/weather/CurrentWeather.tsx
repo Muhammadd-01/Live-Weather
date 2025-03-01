@@ -15,7 +15,6 @@ import {
   const CurrentWeather = () => {
     const { currentWeather, loading, locationLoading, error, units } = useWeather()
   
-    // 2. Improve the loading state to show a better loading indicator
     if (loading || locationLoading) {
       return (
         <div className="weather-card bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 bg-opacity-80 dark:bg-opacity-80">
@@ -51,9 +50,13 @@ import {
         : (currentWeather.visibility / 1609.34).toFixed(1) + " mi"
       : "N/A"
   
-    // Format sunrise and sunset times
-    const formatTime = (timestamp) => {
-      return new Date(timestamp * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    // Correct timestamp formatting
+    const formatTime = (timestamp: number) => {
+      return new Date(timestamp * 1000).toLocaleTimeString(undefined, {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true, // Ensures AM/PM formatting
+      })
     }
   
     return (
@@ -160,5 +163,4 @@ import {
   }
   
   export default CurrentWeather
-  
   
