@@ -25,10 +25,12 @@ const Header = () => {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
+    if (isSearchOpen) setIsSearchOpen(false)
   }
 
   const toggleSearch = () => {
     setIsSearchOpen(!isSearchOpen)
+    if (isMenuOpen) setIsMenuOpen(false)
   }
 
   return (

@@ -4,6 +4,7 @@ import type React from "react"
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react"
 import { getCurrentWeather, getForecast, getWeatherByCity } from "../api/weatherApi"
 import type { WeatherData, ForecastData, WeatherContextType } from "../types/weather"
+import { debounce } from "lodash"
 
 const WeatherContext = createContext<WeatherContextType | undefined>(undefined)
 
@@ -22,6 +23,10 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return "metric"
   })
   const [lastFetchTime, setLastFetchTime] = useState<number>(0)
+  const [cachedData, setCachedData] = useState<{ weather: WeatherData | null; forecast: ForecastData | null }>({
+    weather: null,
+    forecast: null,
+  })
 
   useEffect(() => {
     localStorage.setItem("units", units)
@@ -45,6 +50,7 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
         const forecastData = await getForecast(lat, lon, units)
         setCurrentWeather(weatherData)
         setForecast(forecastData)
+        setCachedData({ weather: weatherData, forecast: forecastData })
         setError(null)
         setLastFetchTime(Date.now())
       } catch (err) {
@@ -57,17 +63,22 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
     [units],
   )
 
+  const debouncedFetchWeatherData = useMemo(() => debounce(fetchWeatherData, 1000), [fetchWeatherData])
+
   const refreshWeather = useCallback(
     async (force = false) => {
       if (!force && Date.now() - lastFetchTime < CACHE_DURATION) {
-        return // Use cached data if it's recent enough
+        // Use cached data if it's recent enough
+        setCurrentWeather(cachedData.weather)
+        setForecast(cachedData.forecast)
+        return
       }
 
       try {
         setLocationLoading(true)
         const position = await getUserLocation()
         const { latitude, longitude } = position.coords
-        await fetchWeatherData(latitude, longitude)
+        await debouncedFetchWeatherData(latitude, longitude)
       } catch (err) {
         setError("Failed to get your location. Please enable location services.")
         console.error(err)
@@ -75,7 +86,7 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setLocationLoading(false)
       }
     },
-    [fetchWeatherData, getUserLocation, lastFetchTime],
+    [debouncedFetchWeatherData, getUserLocation, lastFetchTime, cachedData],
   )
 
   const searchCity = useCallback(
@@ -87,6 +98,7 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
         const forecastData = await getForecast(lat, lon, units)
         setCurrentWeather(weatherData)
         setForecast(forecastData)
+        setCachedData({ weather: weatherData, forecast: forecastData })
         setError(null)
         setLastFetchTime(Date.now())
       } catch (err) {
