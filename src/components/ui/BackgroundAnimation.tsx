@@ -19,12 +19,11 @@ const BackgroundAnimation = () => {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
 
-    const resizeCanvas = () => {
+    const handleResize = () => {
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
     }
-
-    window.addEventListener("resize", resizeCanvas)
+    window.addEventListener("resize", handleResize)
 
     // Determine background style based on weather and theme
     let particleColor = theme === "dark" ? "rgba(255, 255, 255, 0.3)" : "rgba(0, 0, 0, 0.1)"
@@ -277,12 +276,12 @@ const BackgroundAnimation = () => {
     animate()
 
     return () => {
-      window.removeEventListener("resize", resizeCanvas)
+      window.removeEventListener("resize", handleResize)
       window.removeEventListener("mousemove", handleMouseMove)
     }
   }, [theme, currentWeather])
 
-  return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none" />
+  return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full -z-10" />
 }
 
 export default BackgroundAnimation
