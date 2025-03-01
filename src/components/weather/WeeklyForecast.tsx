@@ -17,11 +17,18 @@ const WeeklyForecast = () => {
   }
 
   // Process forecast data to get daily forecasts
-  const dailyData: any[] = []
+  const dailyData: {
+    date: Date
+    minTemp: number
+    maxTemp: number
+    weatherId: number
+    description: string
+  }[] = []
+
   const tempUnit = units === "metric" ? "°C" : "°F"
 
   // Group forecast by day
-  const groupedByDay = forecast.list.reduce((acc: any, item: any) => {
+  const groupedByDay: Record<string, any[]> = forecast.list.reduce((acc: Record<string, any[]>, item: any) => {
     const date = new Date(item.dt * 1000).toLocaleDateString()
     if (!acc[date]) {
       acc[date] = []
@@ -31,7 +38,7 @@ const WeeklyForecast = () => {
   }, {})
 
   // Get min/max temp and most frequent weather condition for each day
-  Object.entries(groupedByDay).forEach(([date, items]: [string, any]) => {
+  Object.entries(groupedByDay).forEach(([date, items]) => {
     const temps = items.map((item: any) => item.main.temp)
     const minTemp = Math.min(...temps)
     const maxTemp = Math.max(...temps)
@@ -42,7 +49,13 @@ const WeeklyForecast = () => {
       const id = item.weather[0].id
       weatherCounts[id] = (weatherCounts[id] || 0) + 1
     })
-    const mostFrequentWeatherId = Object.entries(weatherCounts).reduce((a, b) => (b[1] > a[1] ? b : a), [0, 0])[0]
+
+    const mostFrequentWeatherId = Number(
+      Object.entries(weatherCounts).reduce<[string, number]>(
+        (a, b) => (b[1] > a[1] ? b : a),
+        ["", 0]
+      )[0]
+    )
 
     // Use noon forecast for the description if available, otherwise use the first item
     const noonForecast =
@@ -55,7 +68,7 @@ const WeeklyForecast = () => {
       date: new Date(date),
       minTemp,
       maxTemp,
-      weatherId: Number(mostFrequentWeatherId),
+      weatherId: mostFrequentWeatherId,
       description: noonForecast.weather[0].description,
     })
   })
@@ -98,4 +111,3 @@ const WeeklyForecast = () => {
 }
 
 export default WeeklyForecast
-
