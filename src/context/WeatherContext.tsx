@@ -1,25 +1,16 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, type ReactNode, useCallback } from "react"
 import { getCurrentWeather, getForecast, getWeatherByCity } from "../api/weatherApi"
-
-interface WeatherContextType {
-  currentWeather: any
-  forecast: any
-  loading: boolean
-  error: string | null
-  units: "metric" | "imperial"
-  setUnits: (units: "metric" | "imperial") => void
-  searchCity: (city: string) => Promise<void>
-  refreshWeather: () => Promise<void>
-}
+import type { WeatherData, ForecastData, WeatherContextType } from "../types/weather"
 
 const WeatherContext = createContext<WeatherContextType | undefined>(undefined)
 
 export const WeatherProvider = ({ children }: { children: ReactNode }) => {
-  const [currentWeather, setCurrentWeather] = useState<any>(null)
-  const [forecast, setForecast] = useState<any>(null)
+  const [currentWeather, setCurrentWeather] = useState<WeatherData | null>(null)
+  const [forecast, setForecast] = useState<ForecastData | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
+  const [locationLoading, setLocationLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [units, setUnits] = useState<"metric" | "imperial">(() => {
     const savedUnits = localStorage.getItem("units")
@@ -28,10 +19,12 @@ export const WeatherProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     localStorage.setItem("units", units)
-    if (currentWeather) {
-      refreshWeather()
+    if (currentWeather && !locationLoading) {
+      // Only refresh if we have coordinates from current weather
+      const { lat, lon } = currentWeather.coord
+      fetchWeatherData(lat, lon)
     }
-  }, [units, currentWeather])
+  }, [units, currentWeather, currentWeather?.coord, locationLoading])
 
   const getUserLocation = (): Promise<GeolocationPosition> => {
     return new Promise((resolve, reject) => {
@@ -59,9 +52,13 @@ export const WeatherProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
-  const refreshWeather = async () => {
+  const refreshWeather = useCallback(async () => {
     try {
-      setLoading(true)
+      setLocationLoading(true)
+      // Only set general loading to true when we don't have any data yet
+      if (!currentWeather) {
+        setLoading(true)
+      }
       const position = await getUserLocation()
       const { latitude, longitude } = position.coords
       await fetchWeatherData(latitude, longitude)
@@ -69,9 +66,10 @@ export const WeatherProvider = ({ children }: { children: ReactNode }) => {
       setError("Failed to get your location. Please enable location services.")
       console.error(err)
     } finally {
+      setLocationLoading(false)
       setLoading(false)
     }
-  }
+  }, [currentWeather, fetchWeatherData, getUserLocation])
 
   const searchCity = async (city: string) => {
     try {
@@ -92,7 +90,7 @@ export const WeatherProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     refreshWeather()
-  }, [])
+  }, [refreshWeather])
 
   return (
     <WeatherContext.Provider
@@ -100,6 +98,7 @@ export const WeatherProvider = ({ children }: { children: ReactNode }) => {
         currentWeather,
         forecast,
         loading,
+        locationLoading,
         error,
         units,
         setUnits,
