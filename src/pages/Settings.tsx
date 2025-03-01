@@ -5,16 +5,13 @@ import { FaSun, FaMoon, FaCog, FaGlobe, FaBell } from "react-icons/fa"
 import { useTheme } from "../context/ThemeContext"
 import { useWeather } from "../context/WeatherContext"
 import { useLanguage } from "../context/LanguageContext"
-import { translations } from "../utils/translations"
 import type { Language } from "../context/LanguageContext"
 
 const Settings: React.FC = () => {
   const { theme, toggleTheme } = useTheme()
   const { units, setUnits } = useWeather()
-  const { language, setLanguage } = useLanguage()
+  const { language, setLanguage, t } = useLanguage()
   const [notifications, setNotifications] = React.useState(true)
-
-  const t = translations[language]
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setLanguage(e.target.value as Language)

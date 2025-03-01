@@ -1,8 +1,10 @@
 import { useWeather } from "../../context/WeatherContext"
+import { useLanguage } from "../../context/LanguageContext"
 import WeatherIcon from "./WeatherIcon"
 
 const HourlyForecast = () => {
   const { forecast, loading, error, units } = useWeather()
+  const { t } = useLanguage()
 
   if (loading) {
     return (
@@ -22,7 +24,7 @@ const HourlyForecast = () => {
 
   return (
     <div className="weather-card bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 mt-6 overflow-x-auto bg-opacity-80 dark:bg-opacity-80">
-      <h3 className="text-xl font-semibold mb-4">Hourly Forecast</h3>
+      <h3 className="text-xl font-semibold mb-4">{t.hourlyForecast}</h3>
       <div className="flex space-x-6 pb-2">
         {hourlyData.map((item: any, index: number) => (
           <div key={index} className="flex flex-col items-center min-w-[80px]">

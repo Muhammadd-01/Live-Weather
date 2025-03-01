@@ -1,8 +1,10 @@
 import { useWeather } from "../../context/WeatherContext"
+import { useLanguage } from "../../context/LanguageContext"
 import WeatherIcon from "./WeatherIcon"
 
 const WeeklyForecast = () => {
   const { forecast, loading, error, units } = useWeather()
+  const { t } = useLanguage()
 
   if (loading) {
     return (
@@ -16,20 +18,15 @@ const WeeklyForecast = () => {
     return null
   }
 
-  // Process forecast data to get daily forecasts
-  const dailyData: {
-    date: Date
-    minTemp: number
-    maxTemp: number
-    weatherId: number
-    description: string
-  }[] = []
-
+  // Initialize an empty array for processed daily data
+  const dailyData: any[] = []
   const tempUnit = units === "metric" ? "°C" : "°F"
 
   // Group forecast by day
-  const groupedByDay: Record<string, any[]> = forecast.list.reduce((acc: Record<string, any[]>, item: any) => {
-    const date = new Date(item.dt * 1000).toLocaleDateString()
+  const groupedByDay = forecast.list.reduce((acc: Record<string, any[]>, item: any) => {
+    const date = new Date(item.dt * 1000)
+      .toISOString()
+      .split("T")[0] // Extract YYYY-MM-DD format for consistency
     if (!acc[date]) {
       acc[date] = []
     }
@@ -37,27 +34,23 @@ const WeeklyForecast = () => {
     return acc
   }, {})
 
-  // Get min/max temp and most frequent weather condition for each day
+  // Process daily data
   Object.entries(groupedByDay).forEach(([date, items]) => {
     const temps = items.map((item: any) => item.main.temp)
     const minTemp = Math.min(...temps)
     const maxTemp = Math.max(...temps)
 
-    // Get most frequent weather condition
+    // Get the most frequent weather condition
     const weatherCounts: Record<number, number> = {}
     items.forEach((item: any) => {
       const id = item.weather[0].id
       weatherCounts[id] = (weatherCounts[id] || 0) + 1
     })
-
     const mostFrequentWeatherId = Number(
-      Object.entries(weatherCounts).reduce<[string, number]>(
-        (a, b) => (b[1] > a[1] ? b : a),
-        ["", 0]
-      )[0]
+      Object.entries(weatherCounts).reduce((a, b) => (b[1] > a[1] ? b : a))[0]
     )
 
-    // Use noon forecast for the description if available, otherwise use the first item
+    // Use the forecast closest to noon for the description
     const noonForecast =
       items.find((item: any) => {
         const hour = new Date(item.dt * 1000).getHours()
@@ -65,7 +58,7 @@ const WeeklyForecast = () => {
       }) || items[0]
 
     dailyData.push({
-      date: new Date(date),
+      date: new Date(items[0].dt * 1000), // Ensures correct parsing
       minTemp,
       maxTemp,
       weatherId: mostFrequentWeatherId,
@@ -73,18 +66,20 @@ const WeeklyForecast = () => {
     })
   })
 
-  // Sort by date and limit to 5 days
+  // Sort the data by date and limit it to 5 days
   dailyData.sort((a, b) => a.date.getTime() - b.date.getTime())
   const weeklyData = dailyData.slice(0, 5)
 
   return (
     <div className="weather-card bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 mt-6 bg-opacity-80 dark:bg-opacity-80">
-      <h3 className="text-xl font-semibold mb-4">5-Day Forecast</h3>
+      <h3 className="text-xl font-semibold mb-4">{t.weeklyForecast}</h3>
       <div className="space-y-4">
         {weeklyData.map((day, index) => (
           <div key={index} className="flex items-center justify-between">
             <div className="w-24">
-              <p className="font-medium">{day.date.toLocaleDateString(undefined, { weekday: "short" })}</p>
+              <p className="font-medium">
+                {day.date.toLocaleDateString(undefined, { weekday: "short" })}
+              </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 {day.date.toLocaleDateString(undefined, { month: "short", day: "numeric" })}
               </p>
