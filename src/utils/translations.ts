@@ -53,6 +53,8 @@ export const translations: { [key in Language]: Translations } = {
     openMenu: "Open menu",
     closeMenu: "Close menu",
     viewFullForecast: "View Full Forecast",
+    weatherAlert: "Weather Alert",
+    weatherMap: "Weather Map",
   },
   es: {
     // ... (existing Spanish translations)

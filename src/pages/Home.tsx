@@ -3,6 +3,8 @@ import HourlyForecast from "../components/weather/HourlyForecast"
 import EmergencyAlert from "../components/emergency/EmergencyAlert"
 import WeatherTrivia from "../components/weather/WeatherTrivia"
 import AirQuality from "../components/weather/AirQuality"
+import WeatherAlert from "../components/weather/WeatherAlert"
+import WeatherMap from "../components/weather/WeatherMap"
 import { useWeather } from "../context/WeatherContext"
 import { useLanguage } from "../context/LanguageContext"
 
@@ -13,6 +15,7 @@ const Home = () => {
   return (
     <div className="max-w-4xl mx-auto">
       <EmergencyAlert />
+      <WeatherAlert />
 
       <h1 className="text-3xl font-bold mb-6">{t.currentWeather}</h1>
 
@@ -20,6 +23,7 @@ const Home = () => {
       <HourlyForecast />
       <WeatherTrivia />
       <AirQuality />
+      <WeatherMap />
 
       {!loading && currentWeather && (
         <div className="mt-8 text-center">

@@ -48,16 +48,17 @@ const WeatherParticles = ({ count = 1000, weather }) => {
       break
   }
 
+  const positions = new Float32Array(count * 3)
+  for (let i = 0; i < count; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * viewport.width
+    positions[i * 3 + 1] = (Math.random() - 0.5) * viewport.height
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 10
+  }
+
   return (
     <points ref={particles}>
       <bufferGeometry>
-        <bufferAttribute
-          attachObject={["attributes", "position"]}
-          count={count}
-          array={new Float32Array(count * 3)}
-          itemSize={3}
-          usage={THREE.DynamicDrawUsage}
-        />
+        <bufferAttribute attachObject={["attributes", "position"]} count={count} array={positions} itemSize={3} />
       </bufferGeometry>
       <pointsMaterial
         size={particleSize}
