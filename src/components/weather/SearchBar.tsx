@@ -1,13 +1,12 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect, useRef } from "react"
 import { FaSearch } from "react-icons/fa"
 import { useWeather } from "../../context/WeatherContext"
 import { getCityAutocomplete } from "../../api/weatherApi"
 
-const SearchBar = () => {
+const SearchBar: React.FC = () => {
   const { searchCity } = useWeather()
   const [query, setQuery] = useState("")
   const [suggestions, setSuggestions] = useState<any[]>([])

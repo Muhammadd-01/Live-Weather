@@ -1,5 +1,6 @@
 "use client"
 
+import type React from "react"
 import { useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import { FaSun, FaMoon, FaBars, FaTimes, FaSearch } from "react-icons/fa"
@@ -7,7 +8,7 @@ import { useTheme } from "../../context/ThemeContext"
 import { useLanguage } from "../../context/LanguageContext"
 import SearchBar from "../weather/SearchBar"
 
-const Header = () => {
+const Header: React.FC = () => {
   const { theme, toggleTheme } = useTheme()
   const { t } = useLanguage()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -34,10 +35,10 @@ const Header = () => {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow-md backdrop-blur-md bg-opacity-90 dark:bg-opacity-90">
+    <header className="sticky top-0 z-50 bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
-          <Link to="/" className="text-2xl font-bold text-blue-500">
+          <Link to="/" className="text-2xl font-bold">
             WeatherApp
           </Link>
 
@@ -46,8 +47,8 @@ const Header = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`hover:text-blue-500 transition-colors ${
-                  location.pathname === link.path ? "text-blue-500 font-medium" : ""
+                className={`hover:text-blue-200 transition-colors ${
+                  location.pathname === link.path ? "text-blue-200 font-medium" : ""
                 }`}
               >
                 {link.name}
@@ -59,31 +60,31 @@ const Header = () => {
             <SearchBar />
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-full hover:bg-blue-400 transition-colors"
               aria-label={theme === "dark" ? t.switchToLightMode : t.switchToDarkMode}
             >
-              {theme === "dark" ? <FaSun className="text-yellow-400" /> : <FaMoon className="text-gray-700" />}
+              {theme === "dark" ? <FaSun className="text-yellow-400" /> : <FaMoon className="text-gray-200" />}
             </button>
           </div>
 
           <div className="md:hidden flex items-center space-x-2">
             <button
               onClick={toggleSearch}
-              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-full hover:bg-blue-400 transition-colors"
               aria-label={t.toggleSearch}
             >
               <FaSearch />
             </button>
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-full hover:bg-blue-400 transition-colors"
               aria-label={theme === "dark" ? t.switchToLightMode : t.switchToDarkMode}
             >
-              {theme === "dark" ? <FaSun className="text-yellow-400" /> : <FaMoon className="text-gray-700" />}
+              {theme === "dark" ? <FaSun className="text-yellow-400" /> : <FaMoon className="text-gray-200" />}
             </button>
             <button
               onClick={toggleMenu}
-              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-full hover:bg-blue-400 transition-colors"
               aria-label={isMenuOpen ? t.closeMenu : t.openMenu}
             >
               {isMenuOpen ? <FaTimes /> : <FaBars />}
@@ -104,8 +105,8 @@ const Header = () => {
                 <li key={link.path}>
                   <Link
                     to={link.path}
-                    className={`block py-2 hover:text-blue-500 transition-colors ${
-                      location.pathname === link.path ? "text-blue-500 font-medium" : ""
+                    className={`block py-2 hover:text-blue-200 transition-colors ${
+                      location.pathname === link.path ? "text-blue-200 font-medium" : ""
                     }`}
                     onClick={() => setIsMenuOpen(false)}
                   >

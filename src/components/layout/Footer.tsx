@@ -1,5 +1,5 @@
 import type React from "react"
-import { FaGithub, FaTwitter, FaLinkedin, FaEnvelope } from "react-icons/fa"
+import { FaGithub, FaTwitter, FaLinkedin, FaEnvelope, FaHeart } from "react-icons/fa"
 import { useLanguage } from "../../context/LanguageContext"
 
 const Footer: React.FC = () => {
@@ -65,6 +65,9 @@ const Footer: React.FC = () => {
         <div className="mt-8 text-center text-sm">
           <p>
             &copy; {currentYear} Weather App. {t.allRightsReserved}
+          </p>
+          <p className="mt-2">
+            Made with <FaHeart className="inline-block text-red-500" /> by Weather Enthusiasts
           </p>
         </div>
       </div>

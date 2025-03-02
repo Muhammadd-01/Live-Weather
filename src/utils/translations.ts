@@ -121,7 +121,7 @@ export const translations: { [key in Language]: Translations } = {
     closeMenu: "关闭菜单",
   },
   ru: {
-    settings: "Настройк��",
+    settings: "Настройки",
     appearance: "Внешний вид",
     theme: "Тема",
     themeDescription: "Выберите между светлым и темным режимом",
@@ -318,7 +318,7 @@ export const translations: { [key in Language]: Translations } = {
     footerAbout:
       "موسم ایپ آپ کو اپنے دن کی منصوبہ بندی اور محفوظ رہنے میں مدد کے لیے حقیقی وقت کی موسمی معلومات فراہم کرتا ہے۔",
     quickLinks: "فوری لنکس",
-    connect: "رابطہ کریں",
+    connect: "را��طہ کریں",
     allRightsReserved: "جملہ حقوق محفوظ ہیں۔",
   },
 }
