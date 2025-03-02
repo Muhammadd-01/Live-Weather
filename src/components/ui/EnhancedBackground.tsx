@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import { useWeather } from "../../context/WeatherContext";
 import { useTheme } from "../../context/ThemeContext";
 
@@ -9,7 +9,7 @@ const EnhancedBackground: React.FC = () => {
   const { currentWeather } = useWeather();
   const { theme } = useTheme();
   const animationStateRef = useRef<"wind" | "clouds" | "snow">("wind");
-  const particlesRef = useRef<any[]>([]);
+  const particlesRef = useRef<Particle[]>([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -18,11 +18,11 @@ const EnhancedBackground: React.FC = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const particles: any[] = [];
-    const particleCount = 200;
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles(); // Reinitialize particles after resizing
+    };
 
     class Particle {
       x: number;
@@ -47,7 +47,7 @@ const EnhancedBackground: React.FC = () => {
         this.x += this.speedX;
         this.y += this.speedY;
 
-        // Mouse interaction
+        // Mouse interaction effect
         const dx = mouseX - this.x;
         const dy = mouseY - this.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -56,6 +56,7 @@ const EnhancedBackground: React.FC = () => {
           this.y -= dy * 0.05;
         }
 
+        // Movement based on animation type
         if (this.type === "snow") {
           this.y += 0.5;
           this.x += Math.sin(this.y * 0.01) * 0.5;
@@ -65,13 +66,14 @@ const EnhancedBackground: React.FC = () => {
           this.x += 1;
         }
 
+        // Boundary checks
         if (this.x < 0) this.x = canvas.width;
         if (this.x > canvas.width) this.x = 0;
         if (this.y < 0) this.y = canvas.height;
         if (this.y > canvas.height) this.y = 0;
       }
 
-      draw() {
+      draw(ctx: CanvasRenderingContext2D) {
         ctx.fillStyle = this.color;
         ctx.beginPath();
 
@@ -92,42 +94,36 @@ const EnhancedBackground: React.FC = () => {
     }
 
     function initParticles() {
-      particles.length = 0; // Clear previous particles
-      for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle(animationStateRef.current));
+      particlesRef.current = [];
+      for (let i = 0; i < 200; i++) {
+        particlesRef.current.push(new Particle(animationStateRef.current));
       }
-      particlesRef.current = particles;
     }
 
     let mouseX = 0;
     let mouseY = 0;
 
-    const handleMouseMove = (e: MouseEvent) => {
+    function handleMouseMove(e: MouseEvent) {
       mouseX = e.clientX;
       mouseY = e.clientY;
-    };
+    }
 
     function animate() {
+      if (!canvas || !ctx) return; // Ensure context is available
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach((particle) => {
+      particlesRef.current.forEach((particle) => {
         particle.update(mouseX, mouseY);
-        particle.draw();
+        particle.draw(ctx);
       });
       requestAnimationFrame(animate);
     }
 
-    initParticles();
+    // Initialize particles and start animation
+    resizeCanvas();
     animate();
 
-    // Handle resize
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initParticles(); // Reinitialize particles
-    };
-
     window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", resizeCanvas);
 
     // Transition between animation states
     const transitionInterval = setInterval(() => {
@@ -138,11 +134,11 @@ const EnhancedBackground: React.FC = () => {
           ? "snow"
           : "wind";
       initParticles(); // Recreate particles with new animation state
-    }, 10000); // Change every 10 seconds
+    }, 10000);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", resizeCanvas);
       clearInterval(transitionInterval);
     };
   }, [currentWeather, theme]);

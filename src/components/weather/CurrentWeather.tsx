@@ -79,31 +79,31 @@ const CurrentWeather = React.memo(() => {
             </>
           ) : (
             <>
-              <h2 className="text-2xl font-bold">
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
                 {weatherData?.name}, {weatherData?.country}
               </h2>
-              <p className="text-gray-600 dark:text-gray-400">{weatherData?.date}</p>
-              <div className="flex items-center mt-4">
+              <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">{weatherData?.date}</p>
+              <div className="flex items-center">
                 <WeatherIcon weatherId={weatherData?.weatherId || 800} size={64} />
                 <div className="ml-4">
-                  <p className="text-5xl font-bold">
+                  <p className="text-5xl font-bold text-gray-800 dark:text-white">
                     {weatherData?.temp}
                     {weatherData?.tempUnit}
                   </p>
-                  <p className="capitalize text-lg">{weatherData?.description}</p>
+                  <p className="capitalize text-xl text-gray-600 dark:text-gray-400">{weatherData?.description}</p>
                 </div>
               </div>
               <div className="flex items-center mt-4 space-x-4">
                 <div className="flex items-center">
                   <FaArrowUp className="text-red-500 mr-1" />
-                  <span>
+                  <span className="text-gray-700 dark:text-gray-300">
                     {weatherData?.tempMax}
                     {weatherData?.tempUnit}
                   </span>
                 </div>
                 <div className="flex items-center">
                   <FaArrowDown className="text-blue-500 mr-1" />
-                  <span>
+                  <span className="text-gray-700 dark:text-gray-300">
                     {weatherData?.tempMin}
                     {weatherData?.tempUnit}
                   </span>

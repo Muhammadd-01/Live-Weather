@@ -63,6 +63,7 @@ export const translations: { [key in Language]: Translations } = {
     weatherDetails: "Weather Details",
     windSpeed: "Wind Speed",
     windDirection: "Wind Direction",
+    precipitation: "Precipitation",
   },
   es: {
     settings: "Settings",
@@ -121,6 +122,7 @@ export const translations: { [key in Language]: Translations } = {
     weatherDetails: "Weather Details",
     windSpeed: "Wind Speed",
     windDirection: "Wind Direction",
+    precipitation: "Precipitation",
   },
   fr: {
     settings: "Settings",
@@ -179,6 +181,7 @@ export const translations: { [key in Language]: Translations } = {
     weatherDetails: "Weather Details",
     windSpeed: "Wind Speed",
     windDirection: "Wind Direction",
+    precipitation: "Precipitation",
   },
   de: {
     settings: "Settings",
@@ -237,6 +240,7 @@ export const translations: { [key in Language]: Translations } = {
     weatherDetails: "Weather Details",
     windSpeed: "Wind Speed",
     windDirection: "Wind Direction",
+    precipitation: "Precipitation",
   },
   ja: {
     settings: "Settings",
@@ -295,6 +299,7 @@ export const translations: { [key in Language]: Translations } = {
     weatherDetails: "Weather Details",
     windSpeed: "Wind Speed",
     windDirection: "Wind Direction",
+    precipitation: "Precipitation",
   },
   zh: {
     settings: "设置",
@@ -344,6 +349,8 @@ export const translations: { [key in Language]: Translations } = {
     openMenu: "打开菜单",
     closeMenu: "关闭菜单",
     weatherAlerts: "天气警报",
+    precipitation: "Precipitation",
+    windDirection: "Wind Direction",
   },
   ru: {
     settings: "Настройки",
@@ -393,6 +400,8 @@ export const translations: { [key in Language]: Translations } = {
     openMenu: "Открыть меню",
     closeMenu: "Закрыть меню",
     weatherAlerts: "Погодные оповещения",
+    precipitation: "Precipitation",
+    windDirection: "Wind Direction",
   },
   ar: {
     settings: "الإعدادات",
@@ -442,6 +451,8 @@ export const translations: { [key in Language]: Translations } = {
     openMenu: "فتح القائمة",
     closeMenu: "إغلاق القائمة",
     weatherAlerts: "تنبيهات الطقس",
+    precipitation: "Precipitation",
+    windDirection: "Wind Direction",
   },
   hi: {
     settings: "सेटिंग्स",
@@ -491,6 +502,8 @@ export const translations: { [key in Language]: Translations } = {
     openMenu: "मेनू खोलें",
     closeMenu: "मेनू बंद करें",
     weatherAlerts: "मौसम चेतावनियाँ",
+    precipitation: "Precipitation",
+    windDirection: "Wind Direction",
   },
   ur: {
     settings: "ترتیبات",
@@ -549,6 +562,8 @@ export const translations: { [key in Language]: Translations } = {
     connect: "رابطہ کریں",
     allRightsReserved: "جملہ حقوق محفوظ ہیں۔",
     weatherAlerts: "موسمی انتباہات",
+    precipitation: "Precipitation",
+    windDirection: "Wind Direction",
   },
 }
 
