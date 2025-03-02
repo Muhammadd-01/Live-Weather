@@ -25,85 +25,81 @@ const BackgroundAnimation: React.FC = () => {
     resizeCanvas()
     window.addEventListener("resize", resizeCanvas)
 
-    // Determine background style based on weather and theme
-    let particleColor = theme === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.05)"
-    let particleCount = 100
-    let particleSpeed = 0.2
+    let particles: any[] = []
+    let weatherType = "clear"
+    let particleColor = "rgba(255, 255, 255, 0.3)"
+    let particleCount = 50
+    let particleSpeed = 1
     let particleSize = 2
-    let windEffect = 0
-    let gravity = 0
 
     if (currentWeather) {
       const weatherId = currentWeather.weather[0].id
-      const windSpeed = currentWeather.wind.speed
-
-      // Update particle properties based on weather conditions
       if (weatherId >= 200 && weatherId < 300) {
-        // Thunderstorm
-        particleColor = theme === "dark" ? "rgba(120, 160, 255, 0.7)" : "rgba(100, 140, 255, 0.5)"
+        weatherType = "storm"
+        particleColor = "rgba(120, 160, 255, 0.7)"
         particleCount = 100
         particleSpeed = 7
-        gravity = 1
       } else if (weatherId >= 300 && weatherId < 600) {
-        // Rain
-        particleColor = theme === "dark" ? "rgba(120, 160, 255, 0.5)" : "rgba(100, 140, 255, 0.3)"
-        particleCount = weatherId >= 500 ? 150 : 80
-        particleSpeed = weatherId >= 500 ? 10 : 7
-        gravity = 1
-        windEffect = windSpeed * 0.1
+        weatherType = "rain"
+        particleColor = "rgba(100, 140, 255, 0.5)"
+        particleCount = 120
+        particleSpeed = 5
       } else if (weatherId >= 600 && weatherId < 700) {
-        // Snow
+        weatherType = "snow"
         particleColor = "rgba(255, 255, 255, 0.8)"
         particleCount = 80
-        particleSpeed = 1.5
+        particleSpeed = 2
         particleSize = 4
-        windEffect = windSpeed * 0.2
       } else if (weatherId >= 700 && weatherId < 800) {
-        // Fog/Mist
-        particleColor = theme === "dark" ? "rgba(200, 200, 200, 0.2)" : "rgba(200, 200, 200, 0.3)"
+        weatherType = "fog"
+        particleColor = "rgba(200, 200, 200, 0.2)"
         particleCount = 40
         particleSpeed = 0.5
         particleSize = 50
       } else if (weatherId === 800) {
-        // Clear
-        particleColor = theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 215, 0, 0.2)"
+        weatherType = "clear"
+        particleColor = "rgba(255, 215, 0, 0.2)"
         particleCount = 30
         particleSpeed = 0.1
       } else if (weatherId > 800) {
-        // Clouds
-        particleColor = theme === "dark" ? "rgba(200, 200, 200, 0.3)" : "rgba(100, 100, 100, 0.2)"
-        particleCount = 40
-        particleSpeed = 0.3
+        weatherType = "clouds"
+        particleColor = "rgba(100, 100, 100, 0.2)"
+        particleCount = 60
+        particleSpeed = 0.5
         particleSize = 30
-        windEffect = windSpeed * 0.05
       }
     }
-
-    // Create particles
-    const particles: any[] = []
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         size: Math.random() * particleSize + 1,
-        speedX: (Math.random() - 0.5) * particleSpeed + windEffect,
-        speedY: Math.random() * particleSpeed + gravity,
+        speedX: (Math.random() - 0.5) * particleSpeed,
+        speedY: Math.random() * particleSpeed,
       })
     }
 
-    // Animation loop
+    let mouseX = 0
+    let mouseY = 0
+    window.addEventListener("mousemove", (event) => {
+      mouseX = event.clientX
+      mouseY = event.clientY
+    })
+
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-
       particles.forEach((particle) => {
         ctx.beginPath()
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
         ctx.fillStyle = particleColor
         ctx.fill()
 
-        particle.x += particle.speedX
-        particle.y += particle.speedY
+        let dx = (mouseX - particle.x) * 0.001
+        let dy = (mouseY - particle.y) * 0.001
+
+        particle.x += particle.speedX + dx
+        particle.y += particle.speedY + dy
 
         if (particle.x < 0) particle.x = canvas.width
         if (particle.x > canvas.width) particle.x = 0
@@ -115,7 +111,6 @@ const BackgroundAnimation: React.FC = () => {
     }
 
     animate()
-
     return () => {
       window.removeEventListener("resize", resizeCanvas)
     }
@@ -125,4 +120,3 @@ const BackgroundAnimation: React.FC = () => {
 }
 
 export default BackgroundAnimation
-
