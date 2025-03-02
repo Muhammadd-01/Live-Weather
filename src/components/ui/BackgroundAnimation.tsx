@@ -23,7 +23,7 @@ const BackgroundAnimation = () => {
     mountElement.appendChild(renderer.domElement);
     
     let weatherEffect = "clear";
-    if (currentWeather) {
+    if (currentWeather?.weather?.[0]?.id) {
       const weatherId = currentWeather.weather[0].id;
       if (weatherId >= 200 && weatherId < 300) {
         weatherEffect = "windy"; 
@@ -39,7 +39,12 @@ const BackgroundAnimation = () => {
     // Cloud effect
     const clouds: THREE.Sprite[] = [];
     const createClouds = () => {
-      const cloudTexture = new THREE.TextureLoader().load("/textures/cloud.png");
+      const cloudTexture = new THREE.TextureLoader().load(
+        "/textures/cloud.png",
+        undefined,
+        undefined,
+        () => console.error("Error loading cloud texture")
+      );
       const cloudMaterial = new THREE.SpriteMaterial({ map: cloudTexture, transparent: true });
       for (let i = 0; i < 10; i++) {
         const cloud = new THREE.Sprite(cloudMaterial);
@@ -70,7 +75,7 @@ const BackgroundAnimation = () => {
       for (let i = 0; i < 50; i++) {
         const wind = new THREE.Mesh(
           new THREE.PlaneGeometry(0.5, 0.1),
-          new THREE.MeshBasicMaterial({ color: 0xaaaaaa, transparent: true, opacity: 0.5 })
+          new THREE.MeshStandardMaterial({ color: 0xaaaaaa, transparent: true, opacity: 0.5 })
         );
         wind.position.set((Math.random() - 0.5) * 10, Math.random() * 5, (Math.random() - 0.5) * 10);
         scene.add(wind);
@@ -82,7 +87,7 @@ const BackgroundAnimation = () => {
     let heatEffect: THREE.Mesh | undefined;
     const createHeat = () => {
       const heatGeometry = new THREE.PlaneGeometry(10, 10);
-      const heatMaterial = new THREE.MeshBasicMaterial({ color: 0xff4500, transparent: true, opacity: 0.2 });
+      const heatMaterial = new THREE.MeshStandardMaterial({ color: 0xff4500, transparent: true, opacity: 0.2 });
       heatEffect = new THREE.Mesh(heatGeometry, heatMaterial);
       heatEffect.position.set(0, 0, -5);
       scene.add(heatEffect);
@@ -117,7 +122,7 @@ const BackgroundAnimation = () => {
         if (wind.position.x > 5) wind.position.x = -5;
       });
 
-      if (heatEffect && heatEffect.material instanceof THREE.MeshBasicMaterial) {
+      if (heatEffect && heatEffect.material instanceof THREE.MeshStandardMaterial) {
         heatEffect.material.opacity = 0.2 + Math.sin(Date.now() * 0.002) * 0.1;
       }
       
