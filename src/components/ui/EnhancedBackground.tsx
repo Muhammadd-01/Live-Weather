@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useWeather } from "../../context/WeatherContext";
 import { useTheme } from "../../context/ThemeContext";
 
@@ -8,6 +8,8 @@ const EnhancedBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { currentWeather } = useWeather();
   const { theme } = useTheme();
+  const animationStateRef = useRef<"wind" | "clouds" | "snow">("wind");
+  const particlesRef = useRef<any[]>([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -19,10 +21,8 @@ const EnhancedBackground: React.FC = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    let particles: Particle[] = [];
+    const particles: any[] = [];
     const particleCount = 200;
-    const weather = currentWeather?.weather[0]?.main || "Clear";
-    let animationId: number; // Store animation frame ID
 
     class Particle {
       x: number;
@@ -43,16 +43,24 @@ const EnhancedBackground: React.FC = () => {
         this.type = type;
       }
 
-      update() {
+      update(mouseX: number, mouseY: number) {
         this.x += this.speedX;
         this.y += this.speedY;
+
+        // Mouse interaction
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < 100) {
+          this.x -= dx * 0.05;
+          this.y -= dy * 0.05;
+        }
 
         if (this.type === "snow") {
           this.y += 0.5;
           this.x += Math.sin(this.y * 0.01) * 0.5;
-        } else if (this.type === "heat") {
-          this.y -= 0.5;
-          this.x += Math.sin(this.y * 0.01) * 0.3;
+        } else if (this.type === "cloud") {
+          this.x += 0.2;
         } else if (this.type === "wind") {
           this.x += 1;
         }
@@ -69,62 +77,73 @@ const EnhancedBackground: React.FC = () => {
 
         if (this.type === "snow") {
           ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        } else if (this.type === "heat") {
-          ctx.moveTo(this.x, this.y);
-          ctx.lineTo(this.x - this.size, this.y + this.size * 2);
-          ctx.lineTo(this.x + this.size, this.y + this.size * 2);
+          ctx.fill();
+        } else if (this.type === "cloud") {
+          ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
+          ctx.fill();
         } else if (this.type === "wind") {
           ctx.moveTo(this.x, this.y);
           ctx.lineTo(this.x + this.size * 3, this.y);
+          ctx.strokeStyle = this.color;
+          ctx.lineWidth = 1;
+          ctx.stroke();
         }
-
-        ctx.fill();
       }
     }
 
     function initParticles() {
-      particles = []; // Fix: Clear old particles before re-initializing
+      particles.length = 0; // Clear previous particles
       for (let i = 0; i < particleCount; i++) {
-        let type;
-        if (weather === "Snow") {
-          type = "snow";
-        } else if (weather === "Clear" && currentWeather?.main?.temp > 25) {
-          type = "heat";
-        } else if (currentWeather?.wind?.speed > 5) {
-          type = "wind";
-        } else {
-          type = ["snow", "heat", "wind"][Math.floor(Math.random() * 3)];
-        }
-        particles.push(new Particle(type));
+        particles.push(new Particle(animationStateRef.current));
       }
+      particlesRef.current = particles;
     }
 
-    function animateParticles() {
+    let mouseX = 0;
+    let mouseY = 0;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    };
+
+    function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = 0; i < particles.length; i++) {
-        particles[i].update();
-        particles[i].draw();
-      }
-      animationId = requestAnimationFrame(animateParticles);
+      particles.forEach((particle) => {
+        particle.update(mouseX, mouseY);
+        particle.draw();
+      });
+      requestAnimationFrame(animate);
     }
 
-    // Initialize and animate
     initParticles();
-    animateParticles();
+    animate();
 
-    // Handle Resize
+    // Handle resize
     const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      initParticles(); // Fix: Reset particles on resize
+      initParticles(); // Reinitialize particles
     };
 
+    window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("resize", handleResize);
 
-    // Cleanup function
+    // Transition between animation states
+    const transitionInterval = setInterval(() => {
+      animationStateRef.current =
+        animationStateRef.current === "wind"
+          ? "clouds"
+          : animationStateRef.current === "clouds"
+          ? "snow"
+          : "wind";
+      initParticles(); // Recreate particles with new animation state
+    }, 10000); // Change every 10 seconds
+
     return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(animationId); // Fix: Stop animation when component unmounts
+      clearInterval(transitionInterval);
     };
   }, [currentWeather, theme]);
 

@@ -4,11 +4,11 @@ import HourlyForecast from "../components/weather/HourlyForecast"
 import EmergencyAlert from "../components/emergency/EmergencyAlert"
 import WeatherTrivia from "../components/weather/WeatherTrivia"
 import AirQuality from "../components/weather/AirQuality"
-import WeatherAlert from "../components/weather/WeatherAlert"
 import WeatherMap from "../components/weather/WeatherMap"
+import WeatherDetails from "../components/weather/WeatherDetails"
+import WeatherAlerts from "../components/weather/WeatherAlerts"
 import { useWeather } from "../context/WeatherContext"
 import { useLanguage } from "../context/LanguageContext"
-import WeatherDetails from "../components/weather/WeatherDetails"
 
 const Home: React.FC = () => {
   const { currentWeather, loading } = useWeather()
@@ -17,7 +17,7 @@ const Home: React.FC = () => {
   return (
     <div className="max-w-full mx-auto">
       <EmergencyAlert />
-      <WeatherAlert />
+      <WeatherAlerts />
 
       <h1 className="text-3xl font-bold mb-6">{t.currentWeather}</h1>
 

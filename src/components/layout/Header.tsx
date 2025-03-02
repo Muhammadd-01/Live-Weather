@@ -35,7 +35,7 @@ const Header: React.FC = () => {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md">
+    <header className="sticky top-0 z-50 bg-transparent text-white shadow-md">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           <Link to="/" className="text-2xl font-bold">
