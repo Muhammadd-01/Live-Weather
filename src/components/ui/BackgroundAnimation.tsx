@@ -36,7 +36,7 @@ const BackgroundAnimation = () => {
       }
     }
 
-    // Create animated clouds
+    // Cloud effect
     const clouds: THREE.Sprite[] = [];
     const createClouds = () => {
       const cloudTexture = new THREE.TextureLoader().load("/textures/cloud.png");
@@ -50,13 +50,13 @@ const BackgroundAnimation = () => {
       }
     };
 
-    // Create animated snow
+    // Crystalline Snowfall Effect
     const snowParticles: THREE.Mesh[] = [];
     const createSnow = () => {
       for (let i = 0; i < 200; i++) {
         const particle = new THREE.Mesh(
           new THREE.SphereGeometry(0.05, 8, 8),
-          new THREE.MeshBasicMaterial({ color: 0xffffff })
+          new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5, metalness: 0.8 })
         );
         particle.position.set((Math.random() - 0.5) * 10, Math.random() * 10, (Math.random() - 0.5) * 10);
         scene.add(particle);
@@ -64,19 +64,22 @@ const BackgroundAnimation = () => {
       }
     };
 
-    // Create animated wind
+    // Wind Effect
     const windParticles: THREE.Mesh[] = [];
     const createWind = () => {
       for (let i = 0; i < 50; i++) {
-        const wind = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.1), new THREE.MeshBasicMaterial({ color: 0xaaaaaa, transparent: true, opacity: 0.5 }));
+        const wind = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.5, 0.1),
+          new THREE.MeshBasicMaterial({ color: 0xaaaaaa, transparent: true, opacity: 0.5 })
+        );
         wind.position.set((Math.random() - 0.5) * 10, Math.random() * 5, (Math.random() - 0.5) * 10);
         scene.add(wind);
         windParticles.push(wind);
       }
     };
 
-    // Create animated heat waves
-    let heatEffect: THREE.Mesh | null = null;
+    // Heat Waves Effect
+    let heatEffect: THREE.Mesh | undefined;
     const createHeat = () => {
       const heatGeometry = new THREE.PlaneGeometry(10, 10);
       const heatMaterial = new THREE.MeshBasicMaterial({ color: 0xff4500, transparent: true, opacity: 0.2 });
@@ -114,17 +117,8 @@ const BackgroundAnimation = () => {
         if (wind.position.x > 5) wind.position.x = -5;
       });
 
-      if (heatEffect) {
-        const material = heatEffect.material;
-        if (material instanceof THREE.Material) {
-          material.opacity = 0.2 + Math.sin(Date.now() * 0.002) * 0.1;
-        } else if (Array.isArray(material)) {
-          material.forEach((mat) => {
-            if (mat instanceof THREE.Material) {
-              mat.opacity = 0.2 + Math.sin(Date.now() * 0.002) * 0.1;
-            }
-          });
-        }
+      if (heatEffect && heatEffect.material instanceof THREE.MeshBasicMaterial) {
+        heatEffect.material.opacity = 0.2 + Math.sin(Date.now() * 0.002) * 0.1;
       }
       
       renderer.render(scene, camera);
