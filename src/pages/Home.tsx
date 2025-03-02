@@ -8,6 +8,7 @@ import WeatherAlert from "../components/weather/WeatherAlert"
 import WeatherMap from "../components/weather/WeatherMap"
 import { useWeather } from "../context/WeatherContext"
 import { useLanguage } from "../context/LanguageContext"
+import WeatherDetails from "../components/weather/WeatherDetails"
 
 const Home: React.FC = () => {
   const { currentWeather, loading } = useWeather()
@@ -23,6 +24,7 @@ const Home: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <CurrentWeather />
+          <WeatherDetails />
           <HourlyForecast />
           <WeatherTrivia />
           <AirQuality />

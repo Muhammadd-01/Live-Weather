@@ -59,6 +59,9 @@ export const translations: { [key in Language]: Translations } = {
     quickLinks: "Quick Links",
     connect: "Connect",
     allRightsReserved: "All rights reserved.",
+    weatherDetails: "Weather Details",
+    windSpeed: "Wind Speed",
+    windDirection: "Wind Direction",
   },
   es: {
     // ... (existing Spanish translations)
@@ -318,7 +321,7 @@ export const translations: { [key in Language]: Translations } = {
     footerAbout:
       "موسم ایپ آپ کو اپنے دن کی منصوبہ بندی اور محفوظ رہنے میں مدد کے لیے حقیقی وقت کی موسمی معلومات فراہم کرتا ہے۔",
     quickLinks: "فوری لنکس",
-    connect: "را��طہ کریں",
+    connect: "رابطہ کریں",
     allRightsReserved: "جملہ حقوق محفوظ ہیں۔",
   },
 }
