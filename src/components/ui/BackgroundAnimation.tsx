@@ -29,8 +29,9 @@ const BackgroundAnimation: React.FC = () => {
     let weatherType = "clear"
     let particleColor = "rgba(255, 255, 255, 0.3)"
     let particleCount = 50
-    let particleSpeed = 1
+    let particleSpeed = 2 // Increased wind speed
     let particleSize = 2
+    let windEffect = 0.5 // Added wind effect
 
     if (currentWeather) {
       const weatherId = currentWeather.weather[0].id
@@ -38,35 +39,40 @@ const BackgroundAnimation: React.FC = () => {
         weatherType = "storm"
         particleColor = "rgba(120, 160, 255, 0.7)"
         particleCount = 100
-        particleSpeed = 7
+        particleSpeed = 9
+        windEffect = 2
       } else if (weatherId >= 300 && weatherId < 600) {
         weatherType = "rain"
         particleColor = "rgba(100, 140, 255, 0.5)"
         particleCount = 120
-        particleSpeed = 5
+        particleSpeed = 6
+        windEffect = 1.5
       } else if (weatherId >= 600 && weatherId < 700) {
         weatherType = "snow"
         particleColor = "rgba(255, 255, 255, 0.8)"
         particleCount = 80
-        particleSpeed = 2
+        particleSpeed = 3
         particleSize = 4
+        windEffect = 1.2
       } else if (weatherId >= 700 && weatherId < 800) {
         weatherType = "fog"
         particleColor = "rgba(200, 200, 200, 0.2)"
         particleCount = 40
-        particleSpeed = 0.5
+        particleSpeed = 1
         particleSize = 50
+        windEffect = 0.7
       } else if (weatherId === 800) {
         weatherType = "clear"
         particleColor = "rgba(255, 215, 0, 0.2)"
         particleCount = 30
-        particleSpeed = 0.1
+        particleSpeed = 0.5
       } else if (weatherId > 800) {
         weatherType = "clouds"
         particleColor = "rgba(100, 100, 100, 0.2)"
         particleCount = 60
-        particleSpeed = 0.5
+        particleSpeed = 1
         particleSize = 30
+        windEffect = 1
       }
     }
 
@@ -75,7 +81,7 @@ const BackgroundAnimation: React.FC = () => {
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         size: Math.random() * particleSize + 1,
-        speedX: (Math.random() - 0.5) * particleSpeed,
+        speedX: (Math.random() - 0.5) * particleSpeed + windEffect,
         speedY: Math.random() * particleSpeed,
       })
     }
@@ -95,8 +101,8 @@ const BackgroundAnimation: React.FC = () => {
         ctx.fillStyle = particleColor
         ctx.fill()
 
-        let dx = (mouseX - particle.x) * 0.001
-        let dy = (mouseY - particle.y) * 0.001
+        let dx = (mouseX - particle.x) * 0.002 // Slightly increased wind reaction
+        let dy = (mouseY - particle.y) * 0.002
 
         particle.x += particle.speedX + dx
         particle.y += particle.speedY + dy
