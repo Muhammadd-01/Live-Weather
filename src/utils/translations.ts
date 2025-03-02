@@ -55,6 +55,10 @@ export const translations: { [key in Language]: Translations } = {
     viewFullForecast: "View Full Forecast",
     weatherAlert: "Weather Alert",
     weatherMap: "Weather Map",
+    footerAbout: "Weather App provides real-time weather information to help you plan your day and stay safe.",
+    quickLinks: "Quick Links",
+    connect: "Connect",
+    allRightsReserved: "All rights reserved.",
   },
   es: {
     // ... (existing Spanish translations)
@@ -117,7 +121,7 @@ export const translations: { [key in Language]: Translations } = {
     closeMenu: "关闭菜单",
   },
   ru: {
-    settings: "Настройки",
+    settings: "Настройк��",
     appearance: "Внешний вид",
     theme: "Тема",
     themeDescription: "Выберите между светлым и темным режимом",
@@ -311,6 +315,11 @@ export const translations: { [key in Language]: Translations } = {
     viewFullForecast: "مکمل پیش گوئی دیکھیں",
     weatherAlert: "موسمی انتباہ",
     weatherMap: "موسمی نقشہ",
+    footerAbout:
+      "موسم ایپ آپ کو اپنے دن کی منصوبہ بندی اور محفوظ رہنے میں مدد کے لیے حقیقی وقت کی موسمی معلومات فراہم کرتا ہے۔",
+    quickLinks: "فوری لنکس",
+    connect: "رابطہ کریں",
+    allRightsReserved: "جملہ حقوق محفوظ ہیں۔",
   },
 }
 

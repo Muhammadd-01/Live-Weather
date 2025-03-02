@@ -1,3 +1,4 @@
+import type React from "react"
 import CurrentWeather from "../components/weather/CurrentWeather"
 import HourlyForecast from "../components/weather/HourlyForecast"
 import EmergencyAlert from "../components/emergency/EmergencyAlert"
@@ -8,22 +9,28 @@ import WeatherMap from "../components/weather/WeatherMap"
 import { useWeather } from "../context/WeatherContext"
 import { useLanguage } from "../context/LanguageContext"
 
-const Home = () => {
+const Home: React.FC = () => {
   const { currentWeather, loading } = useWeather()
   const { t } = useLanguage()
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-full mx-auto">
       <EmergencyAlert />
       <WeatherAlert />
 
       <h1 className="text-3xl font-bold mb-6">{t.currentWeather}</h1>
 
-      <CurrentWeather />
-      <HourlyForecast />
-      <WeatherTrivia />
-      <AirQuality />
-      <WeatherMap />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <CurrentWeather />
+          <HourlyForecast />
+          <WeatherTrivia />
+          <AirQuality />
+        </div>
+        <div>
+          <WeatherMap />
+        </div>
+      </div>
 
       {!loading && currentWeather && (
         <div className="mt-8 text-center">

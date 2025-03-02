@@ -1,7 +1,7 @@
 import type React from "react"
 import Header from "./Header"
 import Footer from "./Footer"
-import WeatherBackground from "../ui/WeatherBackground"
+import EnhancedBackground from "../ui/EnhancedBackground"
 
 interface LayoutProps {
   children: React.ReactNode
@@ -10,7 +10,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="relative min-h-screen flex flex-col">
-      <WeatherBackground />
+      <EnhancedBackground />
       <div className="relative z-10 flex flex-col min-h-screen">
         <Header />
         <main className="flex-grow container mx-auto px-4 py-8">{children}</main>

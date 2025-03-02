@@ -1,42 +1,49 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useEffect, useRef } from "react"
-import { useWeather } from "../../context/WeatherContext"
-import { useLanguage } from "../../context/LanguageContext"
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
-import "leaflet/dist/leaflet.css"
-import L from "leaflet"
+import { useEffect, useRef } from "react";
+import { useWeather } from "../../context/WeatherContext";
+import { useLanguage } from "../../context/LanguageContext";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 
-delete L.Icon.Default.prototype._getIconUrl
+// Fix Leaflet marker icon issue
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-  iconUrl: require("leaflet/dist/images/marker-icon.png"),
-  shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
-})
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
 const WeatherMap: React.FC = () => {
-  const { currentWeather } = useWeather()
-  const { t } = useLanguage()
-  const mapRef = useRef(null)
+  const { currentWeather } = useWeather();
+  const { t } = useLanguage();
+  const mapRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
     if (mapRef.current && currentWeather) {
-      mapRef.current.setView([currentWeather.coord.lat, currentWeather.coord.lon], 10)
+      mapRef.current.setView([currentWeather.coord.lat, currentWeather.coord.lon], 10);
     }
-  }, [currentWeather])
+  }, [currentWeather]);
 
   if (!currentWeather) {
-    return null
+    return null;
   }
 
-  const { lat, lon } = currentWeather.coord
+  const { lat, lon } = currentWeather.coord;
 
   return (
-    <div className="mt-6">
-      <h3 className="text-lg font-semibold mb-2">{t.weatherMap}</h3>
-      <div className="h-96 rounded-lg overflow-hidden">
-        <MapContainer center={[lat, lon]} zoom={10} style={{ height: "100%", width: "100%" }} ref={mapRef}>
+    <div className="w-full h-[calc(100vh-64px)] mt-6">
+      {typeof window !== "undefined" && ( // Prevents SSR issues
+        <MapContainer
+          center={[lat, lon]}
+          zoom={10}
+          style={{ height: "100%", width: "100%" }}
+          whenCreated={(map) => (mapRef.current = map)}
+        >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -51,10 +58,9 @@ const WeatherMap: React.FC = () => {
             </Popup>
           </Marker>
         </MapContainer>
-      </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default WeatherMap
-
+export default WeatherMap;
