@@ -10,6 +10,7 @@ const EnhancedBackground: React.FC = () => {
   const { theme } = useTheme();
   const animationStateRef = useRef<"wind" | "clouds" | "snow">("wind");
   const particlesRef = useRef<Particle[]>([]);
+  const animationFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -18,6 +19,7 @@ const EnhancedBackground: React.FC = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    // Resize canvas and reset particles
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -56,7 +58,7 @@ const EnhancedBackground: React.FC = () => {
           this.y -= dy * 0.05;
         }
 
-        // Movement based on animation type
+        // Weather-based movement logic
         if (this.type === "snow") {
           this.y += 0.5;
           this.x += Math.sin(this.y * 0.01) * 0.5;
@@ -66,7 +68,7 @@ const EnhancedBackground: React.FC = () => {
           this.x += 1;
         }
 
-        // Boundary checks
+        // Keep particles within bounds
         if (this.x < 0) this.x = canvas.width;
         if (this.x > canvas.width) this.x = 0;
         if (this.y < 0) this.y = canvas.height;
@@ -115,7 +117,7 @@ const EnhancedBackground: React.FC = () => {
         particle.update(mouseX, mouseY);
         particle.draw(ctx);
       });
-      requestAnimationFrame(animate);
+      animationFrameRef.current = requestAnimationFrame(animate);
     }
 
     // Initialize particles and start animation
@@ -125,7 +127,7 @@ const EnhancedBackground: React.FC = () => {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("resize", resizeCanvas);
 
-    // Transition between animation states
+    // Transition between animation states every 10 seconds
     const transitionInterval = setInterval(() => {
       animationStateRef.current =
         animationStateRef.current === "wind"
@@ -140,6 +142,9 @@ const EnhancedBackground: React.FC = () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", resizeCanvas);
       clearInterval(transitionInterval);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
     };
   }, [currentWeather, theme]);
 
