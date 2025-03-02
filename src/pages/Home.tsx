@@ -2,6 +2,7 @@ import CurrentWeather from "../components/weather/CurrentWeather"
 import HourlyForecast from "../components/weather/HourlyForecast"
 import EmergencyAlert from "../components/emergency/EmergencyAlert"
 import WeatherTrivia from "../components/weather/WeatherTrivia"
+import AirQuality from "../components/weather/AirQuality"
 import { useWeather } from "../context/WeatherContext"
 import { useLanguage } from "../context/LanguageContext"
 
@@ -18,6 +19,7 @@ const Home = () => {
       <CurrentWeather />
       <HourlyForecast />
       <WeatherTrivia />
+      <AirQuality />
 
       {!loading && currentWeather && (
         <div className="mt-8 text-center">

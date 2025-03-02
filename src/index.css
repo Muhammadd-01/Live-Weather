@@ -67,3 +67,15 @@ body {
   }
 }
 
+/* Dark mode styles */
+.dark {
+  color: white;
+  background-color: #1a202c;
+}
+
+/* Light mode styles */
+.light {
+  color: black;
+  background-color: #f7fafc;
+}
+
