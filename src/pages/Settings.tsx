@@ -136,6 +136,7 @@ const Settings: React.FC = () => {
                 <option value="ru">{t.russian}</option>
                 <option value="ar">{t.arabic}</option>
                 <option value="hi">{t.hindi}</option>
+                <option value="ur">{t.urdu}</option>
               </select>
             </div>
           </div>

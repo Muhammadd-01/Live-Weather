@@ -2,7 +2,7 @@ export type Translations = {
   [key: string]: string
 }
 
-export type Language = "en" | "es" | "fr" | "de" | "ja" | "zh" | "ru" | "ar" | "hi"
+export type Language = "en" | "es" | "fr" | "de" | "ja" | "zh" | "ru" | "ar" | "hi" | "ur"
 
 export const translations: { [key in Language]: Translations } = {
   en: {
@@ -259,6 +259,58 @@ export const translations: { [key in Language]: Translations } = {
     toggleSearch: "खोज टॉगल करें",
     openMenu: "मेनू खोलें",
     closeMenu: "मेनू बंद करें",
+  },
+  ur: {
+    settings: "ترتیبات",
+    appearance: "ظاہری شکل",
+    theme: "تھیم",
+    themeDescription: "لائٹ اور ڈارک موڈ کے درمیان انتخاب کریں",
+    toggleTheme: "تھیم تبدیل کریں",
+    units: "یونٹس",
+    metric: "میٹرک",
+    metricDescription: "درجہ حرارت کے لیے سیلسیس استعمال کریں",
+    imperial: "امپیریل",
+    imperialDescription: "درجہ حرارت کے لیے فارن ہائٹ استعمال کریں",
+    notifications: "اطلاعات",
+    weatherAlerts: "موسمی انتباہات",
+    weatherAlertsDescription: "شدید موسم کے لیے اطلاعات وصول کریں",
+    toggleNotifications: "اطلاعات کو ٹوگل کریں",
+    language: "زبان",
+    selectLanguage: "زبان منتخب کریں",
+    english: "انگریزی",
+    spanish: "ہسپانوی",
+    french: "فرانسیسی",
+    german: "جرمن",
+    japanese: "جاپانی",
+    chinese: "چینی",
+    russian: "روسی",
+    arabic: "عربی",
+    hindi: "ہندی",
+    urdu: "اردو",
+    search: "تلاش کریں",
+    currentWeather: "موجودہ موسم",
+    feelsLike: "محسوس ہوتا ہے",
+    humidity: "نمی",
+    wind: "ہوا",
+    pressure: "دباؤ",
+    visibility: "رویت",
+    sunrise: "طلوع آفتاب",
+    sunset: "غروب آفتاب",
+    hourlyForecast: "گھنٹہ وار پیش گوئی",
+    weeklyForecast: "5 روزہ پیش گوئی",
+    home: "ہوم",
+    forecast: "پیش گوئی",
+    news: "خبریں",
+    emergency: "ہنگامی صورتحال",
+    about: "ہمارے بارے میں",
+    switchToLightMode: "لائٹ موڈ پر سوئچ کریں",
+    switchToDarkMode: "ڈارک موڈ پر سوئچ کریں",
+    toggleSearch: "تلاش کو ٹوگل کریں",
+    openMenu: "مینو کھولیں",
+    closeMenu: "مینو بند کریں",
+    viewFullForecast: "مکمل پیش گوئی دیکھیں",
+    weatherAlert: "موسمی انتباہ",
+    weatherMap: "موسمی نقشہ",
   },
 }
 
