@@ -20,23 +20,30 @@ const WindBackground: React.FC = () => {
       canvas.height = window.innerHeight;
     };
 
-    class WindStreak {
+    class WindSwirl {
       x: number;
       y: number;
-      length: number;
-      speed: number;
+      radius: number;
+      speedX: number;
+      speedY: number;
+      angle: number;
       opacity: number;
 
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.length = Math.random() * 50 + 30;
-        this.speed = Math.random() * 2 + 1;
-        this.opacity = Math.random() * 0.5 + 0.2;
+        this.radius = Math.random() * 15 + 5;
+        this.speedX = Math.random() * 1.5 + 0.5;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.angle = Math.random() * Math.PI * 2;
+        this.opacity = Math.random() * 0.5 + 0.3;
       }
 
       update() {
-        this.x += this.speed;
+        this.x += this.speedX;
+        this.y += this.speedY + Math.sin(this.angle) * 1.5;
+        this.angle += 0.1;
+
         if (this.x > canvas.width) {
           this.x = 0;
           this.y = Math.random() * canvas.height;
@@ -47,19 +54,23 @@ const WindBackground: React.FC = () => {
         ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(this.x, this.y);
-        ctx.lineTo(this.x + this.length, this.y);
+        for (let i = 0; i < 5; i++) {
+          const angleOffset = (Math.PI / 2) * i;
+          const swirlX = this.x + Math.cos(this.angle + angleOffset) * this.radius;
+          const swirlY = this.y + Math.sin(this.angle + angleOffset) * this.radius;
+          ctx.lineTo(swirlX, swirlY);
+        }
         ctx.stroke();
       }
     }
 
-    const windStreaks: WindStreak[] = Array.from({ length: 100 }, () => new WindStreak());
+    const windSwirls: WindSwirl[] = Array.from({ length: 50 }, () => new WindSwirl());
 
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      windStreaks.forEach((streak) => {
-        streak.update();
-        streak.draw(ctx);
+      windSwirls.forEach((swirl) => {
+        swirl.update();
+        swirl.draw(ctx);
       });
       animationFrameRef.current = requestAnimationFrame(animate);
     }
