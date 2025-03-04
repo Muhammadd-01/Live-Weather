@@ -29,6 +29,7 @@ const WindBackground: React.FC = () => {
       angle: number;
       opacity: number;
       broken: boolean;
+      breakingFrames: number;
 
       constructor() {
         this.x = Math.random() * canvas.width;
@@ -38,23 +39,39 @@ const WindBackground: React.FC = () => {
         this.angle = Math.random() * Math.PI * 2;
         this.opacity = Math.random() * 0.5 + 0.3;
         this.broken = false;
+        this.breakingFrames = 0;
       }
 
       update() {
-        if (!this.broken) {
+        if (this.broken) {
+          this.breakingFrames++;
+          if (this.breakingFrames > 10) {
+            this.reset();
+          }
+        } else {
           this.y += this.speed;
           this.x += Math.sin(this.angle) * 0.5;
           this.angle += 0.01;
 
           if (this.y > canvas.height) {
-            this.y = 0;
-            this.x = Math.random() * canvas.width;
+            this.reset();
           }
         }
       }
 
       draw(ctx: CanvasRenderingContext2D) {
-        if (!this.broken) {
+        if (this.broken) {
+          ctx.beginPath();
+          for (let i = 0; i < 6; i++) {
+            const x1 = this.x + (this.size * 1.5 * Math.cos(this.angle + (i * Math.PI) / 3));
+            const y1 = this.y + (this.size * 1.5 * Math.sin(this.angle + (i * Math.PI) / 3));
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(x1, y1);
+          }
+          ctx.strokeStyle = `rgba(255, 255, 255, ${1 - this.breakingFrames / 10})`;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        } else {
           ctx.beginPath();
           for (let i = 0; i < 6; i++) {
             const x1 = this.x + this.size * Math.cos(this.angle + (i * Math.PI) / 3);
@@ -65,6 +82,13 @@ const WindBackground: React.FC = () => {
           ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
           ctx.fill();
         }
+      }
+
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = 0;
+        this.broken = false;
+        this.breakingFrames = 0;
       }
     }
 
