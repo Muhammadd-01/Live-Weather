@@ -20,57 +20,49 @@ const WindBackground: React.FC = () => {
       canvas.height = window.innerHeight;
     };
 
-    class WindSwirl {
+    class WindParticle {
       x: number;
       y: number;
-      radius: number;
-      speedX: number;
-      speedY: number;
+      speed: number;
+      size: number;
       angle: number;
       opacity: number;
 
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.radius = Math.random() * 15 + 5;
-        this.speedX = Math.random() * 1.5 + 0.5;
-        this.speedY = Math.random() * 0.5 - 0.25;
+        this.speed = Math.random() * 2 + 1;
+        this.size = Math.random() * 3 + 1;
         this.angle = Math.random() * Math.PI * 2;
         this.opacity = Math.random() * 0.5 + 0.3;
       }
 
       update() {
-        this.x += this.speedX;
-        this.y += this.speedY + Math.sin(this.angle) * 1.5;
-        this.angle += 0.1;
+        this.x += this.speed * Math.cos(this.angle);
+        this.y += this.speed * Math.sin(this.angle);
+        this.angle += 0.05;
 
-        if (this.x > canvas.width) {
-          this.x = 0;
-          this.y = Math.random() * canvas.height;
-        }
+        if (this.x > canvas.width) this.x = 0;
+        if (this.y > canvas.height) this.y = 0;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.y < 0) this.y = canvas.height;
       }
 
       draw(ctx: CanvasRenderingContext2D) {
-        ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
-        ctx.lineWidth = 2;
         ctx.beginPath();
-        for (let i = 0; i < 5; i++) {
-          const angleOffset = (Math.PI / 2) * i;
-          const swirlX = this.x + Math.cos(this.angle + angleOffset) * this.radius;
-          const swirlY = this.y + Math.sin(this.angle + angleOffset) * this.radius;
-          ctx.lineTo(swirlX, swirlY);
-        }
-        ctx.stroke();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.fill();
       }
     }
 
-    const windSwirls: WindSwirl[] = Array.from({ length: 50 }, () => new WindSwirl());
+    const windParticles: WindParticle[] = Array.from({ length: 80 }, () => new WindParticle());
 
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      windSwirls.forEach((swirl) => {
-        swirl.update();
-        swirl.draw(ctx);
+      windParticles.forEach((particle) => {
+        particle.update();
+        particle.draw(ctx);
       });
       animationFrameRef.current = requestAnimationFrame(animate);
     }
