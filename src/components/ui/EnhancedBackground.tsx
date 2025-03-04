@@ -16,7 +16,6 @@ const WindBackground: React.FC = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Resize canvas to fill the screen
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -29,45 +28,65 @@ const WindBackground: React.FC = () => {
       speed: number;
       angle: number;
       opacity: number;
+      broken: boolean;
 
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 4 + 2;
+        this.size = Math.random() * 6 + 2;
         this.speed = Math.random() * 1.5 + 0.5;
         this.angle = Math.random() * Math.PI * 2;
         this.opacity = Math.random() * 0.5 + 0.3;
+        this.broken = false;
       }
 
       update() {
-        this.y += this.speed;
-        this.x += Math.sin(this.angle) * 0.5;
-        this.angle += 0.01;
+        if (!this.broken) {
+          this.y += this.speed;
+          this.x += Math.sin(this.angle) * 0.5;
+          this.angle += 0.01;
 
-        if (this.y > canvas.height) {
-          this.y = 0;
-          this.x = Math.random() * canvas.width;
+          if (this.y > canvas.height) {
+            this.y = 0;
+            this.x = Math.random() * canvas.width;
+          }
         }
       }
 
       draw(ctx: CanvasRenderingContext2D) {
-        ctx.beginPath();
-        for (let i = 0; i < 6; i++) {
-          const x1 = this.x + this.size * Math.cos(this.angle + (i * Math.PI) / 3);
-          const y1 = this.y + this.size * Math.sin(this.angle + (i * Math.PI) / 3);
-          ctx.lineTo(x1, y1);
+        if (!this.broken) {
+          ctx.beginPath();
+          for (let i = 0; i < 6; i++) {
+            const x1 = this.x + this.size * Math.cos(this.angle + (i * Math.PI) / 3);
+            const y1 = this.y + this.size * Math.sin(this.angle + (i * Math.PI) / 3);
+            ctx.lineTo(x1, y1);
+          }
+          ctx.closePath();
+          ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+          ctx.fill();
         }
-        ctx.closePath();
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-        ctx.fill();
       }
     }
 
-    const snowflakes: Snowflake[] = Array.from({ length: 80 }, () => new Snowflake());
+    const snowflakes: Snowflake[] = Array.from({ length: 100 }, () => new Snowflake());
 
     function handleMouseMove(event: MouseEvent) {
       mouseX = event.clientX;
       mouseY = event.clientY;
+    }
+
+    function handleClick(event: MouseEvent) {
+      const clickX = event.clientX;
+      const clickY = event.clientY;
+
+      snowflakes.forEach((flake) => {
+        const dx = flake.x - clickX;
+        const dy = flake.y - clickY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < flake.size * 2) {
+          flake.broken = true;
+        }
+      });
     }
 
     function animate() {
@@ -84,10 +103,12 @@ const WindBackground: React.FC = () => {
 
     window.addEventListener("resize", resizeCanvas);
     window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("click", handleClick);
 
     return () => {
       window.removeEventListener("resize", resizeCanvas);
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("click", handleClick);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
