@@ -34,7 +34,7 @@ const WindBackground: React.FC = () => {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 6 + 2;
+        this.size = Math.random() * 12 + 4; // Larger snowflakes
         this.speed = Math.random() * 1.5 + 0.5;
         this.angle = Math.random() * Math.PI * 2;
         this.opacity = Math.random() * 0.5 + 0.3;
@@ -45,7 +45,7 @@ const WindBackground: React.FC = () => {
       update() {
         if (this.broken) {
           this.breakingFrames++;
-          if (this.breakingFrames > 10) {
+          if (this.breakingFrames > 15) {
             this.reset();
           }
         } else {
@@ -63,12 +63,12 @@ const WindBackground: React.FC = () => {
         if (this.broken) {
           ctx.beginPath();
           for (let i = 0; i < 6; i++) {
-            const x1 = this.x + (this.size * 1.5 * Math.cos(this.angle + (i * Math.PI) / 3));
-            const y1 = this.y + (this.size * 1.5 * Math.sin(this.angle + (i * Math.PI) / 3));
+            const x1 = this.x + (this.size * 2 * Math.cos(this.angle + (i * Math.PI) / 3));
+            const y1 = this.y + (this.size * 2 * Math.sin(this.angle + (i * Math.PI) / 3));
             ctx.moveTo(this.x, this.y);
             ctx.lineTo(x1, y1);
           }
-          ctx.strokeStyle = `rgba(255, 255, 255, ${1 - this.breakingFrames / 10})`;
+          ctx.strokeStyle = `rgba(255, 255, 255, ${1 - this.breakingFrames / 15})`;
           ctx.lineWidth = 2;
           ctx.stroke();
         } else {
@@ -92,7 +92,7 @@ const WindBackground: React.FC = () => {
       }
     }
 
-    const snowflakes: Snowflake[] = Array.from({ length: 100 }, () => new Snowflake());
+    const snowflakes: Snowflake[] = Array.from({ length: 80 }, () => new Snowflake());
 
     function handleMouseMove(event: MouseEvent) {
       mouseX = event.clientX;
