@@ -9,15 +9,15 @@ import L from "leaflet";
 
 // Fix Leaflet icon issue in Vite (works only on client side)
 if (typeof window !== "undefined") {
-  delete (L.Icon.Default.prototype as any)._getIconUrl;
+  delete L.Icon.Default.prototype._getIconUrl;
   L.Icon.Default.mergeOptions({
-    iconRetinaUrl: new URL("leaflet/dist/images/marker-icon-2x.png", import.meta.url).href,
-    iconUrl: new URL("leaflet/dist/images/marker-icon.png", import.meta.url).href,
-    shadowUrl: new URL("leaflet/dist/images/marker-shadow.png", import.meta.url).href,
+    iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
+    iconUrl: require("leaflet/dist/images/marker-icon.png"),
+    shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
   });
 }
 
-const MapUpdater = ({ lat, lon }: { lat: number; lon: number }) => {
+const MapUpdater = ({ lat, lon }) => {
   const map = useMap();
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const MapUpdater = ({ lat, lon }: { lat: number; lon: number }) => {
   return null;
 };
 
-const WeatherMap: React.FC = () => {
+const WeatherMap = () => {
   const { currentWeather } = useWeather();
   const { t } = useLanguage();
   const [isClient, setIsClient] = useState(false);
@@ -42,7 +42,10 @@ const WeatherMap: React.FC = () => {
     return null;
   }
 
-  const { lat, lon } = currentWeather.coord;
+  const { coord } = currentWeather;
+  if (!coord) return null;
+
+  const { lat, lon } = coord;
 
   return (
     <div className="w-full h-[calc(100vh-200px)] mt-6">
