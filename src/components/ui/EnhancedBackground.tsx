@@ -22,54 +22,48 @@ const WindBackground: React.FC = () => {
       canvas.height = window.innerHeight;
     };
 
-    class WindParticle {
+    class Snowflake {
       x: number;
       y: number;
-      speed: number;
       size: number;
+      speed: number;
       angle: number;
       opacity: number;
 
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.speed = Math.random() * 2 + 1;
-        this.size = Math.random() * 3 + 1;
+        this.size = Math.random() * 4 + 2;
+        this.speed = Math.random() * 1.5 + 0.5;
         this.angle = Math.random() * Math.PI * 2;
         this.opacity = Math.random() * 0.5 + 0.3;
       }
 
       update() {
-        const dx = this.x - mouseX;
-        const dy = this.y - mouseY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        this.y += this.speed;
+        this.x += Math.sin(this.angle) * 0.5;
+        this.angle += 0.01;
 
-        if (distance < 100) {
-          this.angle += 0.1; // Slight deflection towards mouse
-          this.speed = 3;
-        } else {
-          this.speed = Math.random() * 2 + 1;
+        if (this.y > canvas.height) {
+          this.y = 0;
+          this.x = Math.random() * canvas.width;
         }
-
-        this.x += this.speed * Math.cos(this.angle);
-        this.y += this.speed * Math.sin(this.angle);
-        this.angle += 0.02;
-
-        if (this.x > canvas.width) this.x = 0;
-        if (this.y > canvas.height) this.y = 0;
-        if (this.x < 0) this.x = canvas.width;
-        if (this.y < 0) this.y = canvas.height;
       }
 
       draw(ctx: CanvasRenderingContext2D) {
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        for (let i = 0; i < 6; i++) {
+          const x1 = this.x + this.size * Math.cos(this.angle + (i * Math.PI) / 3);
+          const y1 = this.y + this.size * Math.sin(this.angle + (i * Math.PI) / 3);
+          ctx.lineTo(x1, y1);
+        }
+        ctx.closePath();
         ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
         ctx.fill();
       }
     }
 
-    const windParticles: WindParticle[] = Array.from({ length: 80 }, () => new WindParticle());
+    const snowflakes: Snowflake[] = Array.from({ length: 80 }, () => new Snowflake());
 
     function handleMouseMove(event: MouseEvent) {
       mouseX = event.clientX;
@@ -78,9 +72,9 @@ const WindBackground: React.FC = () => {
 
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      windParticles.forEach((particle) => {
-        particle.update();
-        particle.draw(ctx);
+      snowflakes.forEach((flake) => {
+        flake.update();
+        flake.draw(ctx);
       });
       animationFrameRef.current = requestAnimationFrame(animate);
     }
