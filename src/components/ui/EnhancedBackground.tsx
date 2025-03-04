@@ -9,6 +9,7 @@ const WindBackground: React.FC = () => {
   const animationFrameRef = useRef<number | null>(null);
   let mouseX = 0;
   let mouseY = 0;
+  const audio = new Audio("/crystal-break.mp3");
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -34,7 +35,7 @@ const WindBackground: React.FC = () => {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 12 + 4; // Larger snowflakes
+        this.size = Math.random() * 8 + 4; // Mix of small and big
         this.speed = Math.random() * 1.5 + 0.5;
         this.angle = Math.random() * Math.PI * 2;
         this.opacity = Math.random() * 0.5 + 0.3;
@@ -107,8 +108,10 @@ const WindBackground: React.FC = () => {
         const dx = flake.x - clickX;
         const dy = flake.y - clickY;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < flake.size * 2) {
+        if (distance < flake.size * 2 && !flake.broken) {
           flake.broken = true;
+          audio.currentTime = 0;
+          audio.play();
         }
       });
     }
