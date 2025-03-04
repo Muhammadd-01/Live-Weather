@@ -7,6 +7,8 @@ const WindBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { theme } = useTheme();
   const animationFrameRef = useRef<number | null>(null);
+  let mouseX = 0;
+  let mouseY = 0;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -38,9 +40,20 @@ const WindBackground: React.FC = () => {
       }
 
       update() {
+        const dx = this.x - mouseX;
+        const dy = this.y - mouseY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 100) {
+          this.angle += 0.1; // Slight deflection towards mouse
+          this.speed = 3;
+        } else {
+          this.speed = Math.random() * 2 + 1;
+        }
+
         this.x += this.speed * Math.cos(this.angle);
         this.y += this.speed * Math.sin(this.angle);
-        this.angle += 0.05;
+        this.angle += 0.02;
 
         if (this.x > canvas.width) this.x = 0;
         if (this.y > canvas.height) this.y = 0;
@@ -58,6 +71,11 @@ const WindBackground: React.FC = () => {
 
     const windParticles: WindParticle[] = Array.from({ length: 80 }, () => new WindParticle());
 
+    function handleMouseMove(event: MouseEvent) {
+      mouseX = event.clientX;
+      mouseY = event.clientY;
+    }
+
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       windParticles.forEach((particle) => {
@@ -71,9 +89,11 @@ const WindBackground: React.FC = () => {
     animate();
 
     window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("mousemove", handleMouseMove);
 
     return () => {
       window.removeEventListener("resize", resizeCanvas);
+      window.removeEventListener("mousemove", handleMouseMove);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
