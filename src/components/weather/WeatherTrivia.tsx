@@ -1,28 +1,27 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect } from "react"
-import { useLanguage } from "../../context/LanguageContext"
-import { FaLightbulb } from "react-icons/fa"
+import React, { useState, useEffect } from "react";
+import { useLanguage } from "../../context/LanguageContext";
+import { FaLightbulb } from "react-icons/fa";
 
 const WeatherTrivia: React.FC = () => {
-  const { language } = useLanguage()
-  const [currentFact, setCurrentFact] = useState("")
+  const { language } = useLanguage();
+  const [currentFact, setCurrentFact] = useState("");
 
   useEffect(() => {
     const fetchTrivia = async () => {
       try {
-        const response = await fetch("http://numbersapi.com/random/date?json")
-        const data = await response.json()
-        setCurrentFact(data.text)
+        const response = await fetch("http://numbersapi.com/random/date?json");
+        const data = await response.json();
+        setCurrentFact(data.text);
       } catch (error) {
-        console.error("Error fetching trivia:", error)
-        setCurrentFact("Did you know? Weather affects our daily lives in countless ways!")
+        console.error("Error fetching trivia:", error);
+        setCurrentFact("Did you know? Weather affects our daily lives in countless ways!");
       }
-    }
+    };
 
-    fetchTrivia()
-  }, [])
+    fetchTrivia();
+  }, []);
 
   return (
     <div className="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg shadow-md mt-6 animate-fade-in">
@@ -32,8 +31,7 @@ const WeatherTrivia: React.FC = () => {
       </div>
       <p className="text-sm">{currentFact}</p>
     </div>
-  )
-}
+  );
+};
 
-export default WeatherTrivia
-
+export default WeatherTrivia;
