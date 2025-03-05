@@ -29,7 +29,9 @@ const Settings: React.FC = () => {
       <div className="space-y-6">
         {/* Appearance Section */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">{t?.appearance || "Appearance"}</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            {t?.appearance || "Appearance"}
+          </h2>
 
           <div className="flex items-center justify-between">
             <div className="flex items-center">
@@ -49,11 +51,16 @@ const Settings: React.FC = () => {
               onClick={toggleTheme}
               className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 dark:bg-gray-700"
             >
-              <span className="sr-only">{t?.toggleTheme || "Toggle Theme"}</span>
+              <span className="sr-only">
+                {t?.toggleTheme || "Toggle Theme"}
+              </span>
               <span
                 className={`${
-                  theme === "dark" ? "translate-x-6 bg-blue-500" : "translate-x-1 bg-white"
-                } inline-block h-4 w-4 transform rounded-full transition`}/>
+                  theme === "dark"
+                    ? "translate-x-6 bg-blue-500"
+                    : "translate-x-1 bg-white"
+                } inline-block h-4 w-4 transform rounded-full transition`}
+              />
             </button>
           </div>
         </div>
@@ -73,7 +80,9 @@ const Settings: React.FC = () => {
                 className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300"
               />
               <label htmlFor="metric" className="ml-2 block">
-                <span className="font-medium">{t?.metric || "Metric (°C, km/h)"}</span>
+                <span className="font-medium">
+                  {t?.metric || "Metric (°C, km/h)"}
+                </span>
               </label>
             </div>
 
@@ -87,7 +96,9 @@ const Settings: React.FC = () => {
                 className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300"
               />
               <label htmlFor="imperial" className="ml-2 block">
-                <span className="font-medium">{t?.imperial || "Imperial (°F, mph)"}</span>
+                <span className="font-medium">
+                  {t?.imperial || "Imperial (°F, mph)"}
+                </span>
               </label>
             </div>
           </div>
@@ -95,29 +106,40 @@ const Settings: React.FC = () => {
 
         {/* Notifications Section */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">{t?.notifications || "Notifications"}</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            {t?.notifications || "Notifications"}
+          </h2>
 
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <FaBell className="text-orange-500 mr-3" size={20} />
-              <p className="font-medium">{t?.weatherAlerts || "Weather Alerts"}</p>
+              <p className="font-medium">
+                {t?.weatherAlerts || "Weather Alerts"}
+              </p>
             </div>
             <button
               onClick={() => setNotifications(!notifications)}
               className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 dark:bg-gray-700"
             >
-              <span className="sr-only">{t?.toggleNotifications || "Toggle Notifications"}</span>
+              <span className="sr-only">
+                {t?.toggleNotifications || "Toggle Notifications"}
+              </span>
               <span
                 className={`${
-                  notifications ? "translate-x-6 bg-blue-500" : "translate-x-1 bg-white"
-                } inline-block h-4 w-4 transform rounded-full transition`}/>
+                  notifications
+                    ? "translate-x-6 bg-blue-500"
+                    : "translate-x-1 bg-white"
+                } inline-block h-4 w-4 transform rounded-full transition`}
+              />
             </button>
           </div>
         </div>
 
         {/* Language Section */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">{t?.language || "Language"}</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            {t?.language || "Language"}
+          </h2>
 
           <div className="flex items-center">
             <FaGlobe className="text-green-500 mr-3" size={20} />
@@ -126,11 +148,22 @@ const Settings: React.FC = () => {
               onChange={handleLanguageChange}
               className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500"
             >
-              {["en", "es", "fr", "de", "ja", "zh", "ru", "ar", "hi", "ur"].map((lang) => (
-                <option key={lang} value={lang}>
-                  {t?.[lang] || lang.toUpperCase()}
-                </option>
-              ))}
+              {["en", "es", "fr", "de", "ja", "zh", "ru", "ar", "hi", "ur"].map(
+                (lang) => (
+                  <option key={lang} value={lang}>
+                    {lang === "en" && "English (United States)"}
+                    {lang === "es" && "Spanish (Spain)"}
+                    {lang === "fr" && "French (France)"}
+                    {lang === "de" && "German (Germany)"}
+                    {lang === "ja" && "Japanese (Japan)"}
+                    {lang === "zh" && "Chinese (China)"}
+                    {lang === "ru" && "Russian (Russia)"}
+                    {lang === "ar" && "Arabic (Saudi Arabia)"}
+                    {lang === "hi" && "Hindi (India)"}
+                    {lang === "ur" && "Urdu (Pakistan)"}
+                  </option>
+                )
+              )}
             </select>
           </div>
         </div>
