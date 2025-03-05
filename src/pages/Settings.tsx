@@ -9,7 +9,7 @@ import type { Language } from "../context/LanguageContext";
 
 const Settings: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
-  const { units, setUnits } = useWeather();
+  const { units, setUnits } = useWeather(); // ✅ Using units and setUnits properly
   const { language, setLanguage, t } = useLanguage();
   const [notifications, setNotifications] = React.useState(true);
 
@@ -53,8 +53,7 @@ const Settings: React.FC = () => {
               <span
                 className={`${
                   theme === "dark" ? "translate-x-6 bg-blue-500" : "translate-x-1 bg-white"
-                } inline-block h-4 w-4 transform rounded-full transition`}
-              />
+                } inline-block h-4 w-4 transform rounded-full transition`}/>
             </button>
           </div>
         </div>
@@ -111,8 +110,7 @@ const Settings: React.FC = () => {
               <span
                 className={`${
                   notifications ? "translate-x-6 bg-blue-500" : "translate-x-1 bg-white"
-                } inline-block h-4 w-4 transform rounded-full transition`}
-              />
+                } inline-block h-4 w-4 transform rounded-full transition`}/>
             </button>
           </div>
         </div>
