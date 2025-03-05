@@ -7,15 +7,20 @@ const WindBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { theme } = useTheme();
   const animationFrameRef = useRef<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   let mouseX = 0;
   let mouseY = 0;
-  const audio = new Audio("/crystal-break.mp3");
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+
+    // Load audio once
+    if (!audioRef.current) {
+      audioRef.current = new Audio("/crystal-break.mp3");
+    }
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
@@ -62,9 +67,9 @@ const WindBackground: React.FC = () => {
 
       draw(ctx: CanvasRenderingContext2D) {
         const snowflakeColor = theme === "dark" ? "255, 255, 255" : "0, 0, 0"; // White in dark mode, black in light mode
-        
+
+        ctx.beginPath();
         if (this.broken) {
-          ctx.beginPath();
           for (let i = 0; i < 6; i++) {
             const x1 = this.x + (this.size * 2 * Math.cos(this.angle + (i * Math.PI) / 3));
             const y1 = this.y + (this.size * 2 * Math.sin(this.angle + (i * Math.PI) / 3));
@@ -75,7 +80,6 @@ const WindBackground: React.FC = () => {
           ctx.lineWidth = 2;
           ctx.stroke();
         } else {
-          ctx.beginPath();
           for (let i = 0; i < 6; i++) {
             const x1 = this.x + this.size * Math.cos(this.angle + (i * Math.PI) / 3);
             const y1 = this.y + this.size * Math.sin(this.angle + (i * Math.PI) / 3);
@@ -112,8 +116,10 @@ const WindBackground: React.FC = () => {
         const distance = Math.sqrt(dx * dx + dy * dy);
         if (distance < flake.size * 2 && !flake.broken) {
           flake.broken = true;
-          audio.currentTime = 0;
-          audio.play();
+          if (audioRef.current) {
+            audioRef.current.currentTime = 0;
+            audioRef.current.play().catch((err) => console.error("Audio play blocked:", err));
+          }
         }
       });
     }
