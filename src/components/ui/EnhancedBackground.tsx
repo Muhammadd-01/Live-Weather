@@ -35,7 +35,7 @@ const WindBackground: React.FC = () => {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 8 + 4; // Mix of small and big
+        this.size = Math.random() * 8 + 4;
         this.speed = Math.random() * 1.5 + 0.5;
         this.angle = Math.random() * Math.PI * 2;
         this.opacity = Math.random() * 0.5 + 0.3;
@@ -61,6 +61,8 @@ const WindBackground: React.FC = () => {
       }
 
       draw(ctx: CanvasRenderingContext2D) {
+        const snowflakeColor = theme === "dark" ? "255, 255, 255" : "0, 0, 0"; // White in dark mode, black in light mode
+        
         if (this.broken) {
           ctx.beginPath();
           for (let i = 0; i < 6; i++) {
@@ -69,7 +71,7 @@ const WindBackground: React.FC = () => {
             ctx.moveTo(this.x, this.y);
             ctx.lineTo(x1, y1);
           }
-          ctx.strokeStyle = `rgba(255, 255, 255, ${1 - this.breakingFrames / 15})`;
+          ctx.strokeStyle = `rgba(${snowflakeColor}, ${1 - this.breakingFrames / 15})`;
           ctx.lineWidth = 2;
           ctx.stroke();
         } else {
@@ -80,7 +82,7 @@ const WindBackground: React.FC = () => {
             ctx.lineTo(x1, y1);
           }
           ctx.closePath();
-          ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+          ctx.fillStyle = `rgba(${snowflakeColor}, ${this.opacity})`;
           ctx.fill();
         }
       }
@@ -142,7 +144,7 @@ const WindBackground: React.FC = () => {
     };
   }, [theme]);
 
-  return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full -z-10" />;
+  return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full -z-10 bg-transparent" />;
 };
 
 export default WindBackground;
