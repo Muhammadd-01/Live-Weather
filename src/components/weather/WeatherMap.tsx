@@ -7,10 +7,9 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// Fix Leaflet icon issue in Next.js (ensure it runs only on the client side)
+// Fix Leaflet icon issue
 const fixLeafletIcons = () => {
   if (typeof window !== "undefined") {
-    delete L.Icon.Default.prototype._getIconUrl;
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: "/leaflet/dist/images/marker-icon-2x.png",
       iconUrl: "/leaflet/dist/images/marker-icon.png",
@@ -19,7 +18,7 @@ const fixLeafletIcons = () => {
   }
 };
 
-const MapUpdater = ({ lat, lon }) => {
+const MapUpdater = ({ lat, lon }: { lat: number; lon: number }) => {
   const map = useMap();
 
   useEffect(() => {
@@ -57,7 +56,7 @@ const WeatherMap = () => {
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          attribution={`&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors`}
         />
         <Marker position={[lat, lon]}>
           <Popup>
