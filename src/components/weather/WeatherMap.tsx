@@ -7,22 +7,25 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// Fix Leaflet icon issue in Vite (works only on client side)
-if (typeof window !== "undefined") {
-  delete L.Icon.Default.prototype._getIconUrl;
-  L.Icon.Default.mergeOptions({
-    iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-    iconUrl: require("leaflet/dist/images/marker-icon.png"),
-    shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
-  });
-}
+// Fix Leaflet icon issue in Next.js (ensure it runs only on the client side)
+const fixLeafletIcons = () => {
+  if (typeof window !== "undefined") {
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: "/leaflet/dist/images/marker-icon-2x.png",
+      iconUrl: "/leaflet/dist/images/marker-icon.png",
+      shadowUrl: "/leaflet/dist/images/marker-shadow.png",
+    });
+  }
+};
 
 const MapUpdater = ({ lat, lon }) => {
   const map = useMap();
 
   useEffect(() => {
-    if (!map) return;
-    map.setView([lat, lon], 10);
+    if (map) {
+      map.setView([lat, lon], 10);
+    }
   }, [lat, lon, map]);
 
   return null;
@@ -33,14 +36,12 @@ const WeatherMap = () => {
   const { t } = useLanguage();
   const [isClient, setIsClient] = useState(false);
 
-  // Ensure this runs only on the client side
   useEffect(() => {
     setIsClient(true);
+    fixLeafletIcons();
   }, []);
 
-  if (!currentWeather || !isClient) {
-    return null;
-  }
+  if (!currentWeather || !isClient) return null;
 
   const { coord } = currentWeather;
   if (!coord) return null;
@@ -49,7 +50,11 @@ const WeatherMap = () => {
 
   return (
     <div className="w-full h-[calc(100vh-200px)] mt-6">
-      <MapContainer center={[lat, lon]} zoom={10} style={{ height: "100%", width: "100%", zIndex: 1 }}>
+      <MapContainer
+        center={[lat, lon]}
+        zoom={10}
+        style={{ height: "100%", width: "100%", zIndex: 1 }}
+      >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
