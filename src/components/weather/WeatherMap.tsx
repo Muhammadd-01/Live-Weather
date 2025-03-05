@@ -7,7 +7,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// Fix Leaflet icon issue
+// Fix Leaflet icon issue in Next.js
 const fixLeafletIcons = () => {
   if (typeof window !== "undefined") {
     L.Icon.Default.mergeOptions({
@@ -18,12 +18,13 @@ const fixLeafletIcons = () => {
   }
 };
 
+// Dynamic center updater
 const MapUpdater = ({ lat, lon }: { lat: number; lon: number }) => {
   const map = useMap();
 
   useEffect(() => {
     if (map) {
-      map.setView([lat, lon], 10);
+      map.flyTo([lat, lon], 10, { animate: true });
     }
   }, [lat, lon, map]);
 
@@ -34,23 +35,28 @@ const WeatherMap = () => {
   const { currentWeather } = useWeather();
   const { t } = useLanguage();
   const [isClient, setIsClient] = useState(false);
+  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
 
   useEffect(() => {
     setIsClient(true);
     fixLeafletIcons();
   }, []);
 
-  if (!currentWeather || !isClient) return null;
+  useEffect(() => {
+    if (currentWeather?.coord) {
+      setMapCenter([currentWeather.coord.lat, currentWeather.coord.lon]);
+    }
+  }, [currentWeather]);
 
-  const { coord } = currentWeather;
-  if (!coord) return null;
+  if (!currentWeather || !isClient || !mapCenter) return null;
 
-  const { lat, lon } = coord;
+  const { lat, lon } = currentWeather.coord;
 
   return (
     <div className="w-full h-[calc(100vh-200px)] mt-6">
       <MapContainer
-        center={[lat, lon]}
+        key={lat + lon} // Forces re-render when location changes
+        center={mapCenter}
         zoom={10}
         style={{ height: "100%", width: "100%", zIndex: 1 }}
       >
@@ -58,7 +64,7 @@ const WeatherMap = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution={`&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors`}
         />
-        <Marker position={[lat, lon]}>
+        <Marker position={mapCenter}>
           <Popup>
             {currentWeather.name}, {currentWeather.sys.country}
             <br />
